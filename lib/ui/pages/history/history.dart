@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:driver/ui/pages/home/home.dart';
 
 class History extends StatelessWidget {
-  const History ({super.key});
+  const History({super.key});
 
   @override
   Widget build(BuildContext context) {

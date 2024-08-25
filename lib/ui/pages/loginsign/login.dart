@@ -182,9 +182,9 @@ class _LoginState extends State<Login> {
                             ElevatedButton(
                               onPressed: () {
                                 Navigator.push(
-                                      context,
-                                        MaterialPageRoute(builder: (context) => const Home())
-                                    );
+                                    context,
+                                      MaterialPageRoute(builder: (context) => const Home())
+                                );
                               },
                               style: ElevatedButton.styleFrom(
                                   shape: const StadiumBorder(),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:driver/ui/pages/company/company.dart';
 import 'package:driver/ui/pages/inventory/data.dart';
+import 'package:driver/ui/pages/profile/profile.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -18,7 +19,7 @@ class HomeState extends State<Home> {
     const HomeContent(),
     const DataPengiriman(),
     const History(),
-    const Placeholder(),
+    const Profile(),
   ];
 
   void onItemTapped(int index) {
