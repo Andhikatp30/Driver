@@ -1,3 +1,4 @@
+import 'package:driver/ui/pages/history/history.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:driver/ui/pages/company/company.dart';
@@ -16,8 +17,8 @@ class HomeState extends State<Home> {
   final List<Widget> _pages = [
     const HomeContent(),
     const DataPengiriman(),
-    const Placeholder(), // Replace with your actual History widget
-    Placeholder(), // Replace with your actual Profile widget
+    const History(),
+    const Placeholder(),
   ];
 
   void onItemTapped(int index) {
@@ -80,8 +81,7 @@ class HomeContent extends StatelessWidget {
                 children: [
                   const CircleAvatar(
                     radius: 30,
-                    backgroundImage: AssetImage(
-                        'assets/avatar.png'), // Ganti dengan gambar Anda
+                    backgroundImage: AssetImage('assets/images/avatar.png'),
                   ),
                   const SizedBox(width: 16),
                   Column(
@@ -115,13 +115,15 @@ class HomeContent extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Dashboard Heading
-            Text(
-              'Dashboard',
-              style: GoogleFonts.poppins(
-                textStyle: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+            Center(
+              child: Text(
+                'Dashboard',
+                style: GoogleFonts.poppins(
+                  textStyle: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),
@@ -132,7 +134,7 @@ class HomeContent extends StatelessWidget {
               context,
               'Inventory',
               'Data Pengiriman',
-              'assets/images/inventory.png', // Ganti dengan ikon yang sesuai
+              'assets/images/inventory.png',
               const Color(0xFF04A5A5), // Warna latar belakang card
               onTap: () {
                 final homeState = context.findAncestorStateOfType<HomeState>();
@@ -147,10 +149,11 @@ class HomeContent extends StatelessWidget {
               context,
               'History',
               'Riwayat',
-              'assets/images/history.png', // Ganti dengan ikon yang sesuai
+              'assets/images/history.png',
               const Color(0xFF04A5A5), // Warna latar belakang card
               onTap: () {
-                // Handle navigation or actions here
+                final homeState = context.findAncestorStateOfType<HomeState>();
+                homeState?.onItemTapped(1);
               },
             ),
 
@@ -161,9 +164,9 @@ class HomeContent extends StatelessWidget {
               context,
               'Company Profile',
               'Profil Perusahaan',
-              'assets/images/company.png', // Ganti dengan ikon yang sesuai
+              'assets/images/company.png',
               const Color(0xFF04A5A5), // Warna latar belakang card
-              borderColor: Colors.blue, // Border biru untuk card terakhir
+              // borderColor: Colors.blue, // Border biru untuk card terakhir
               onTap: () {
                 Navigator.push(
                   context,
