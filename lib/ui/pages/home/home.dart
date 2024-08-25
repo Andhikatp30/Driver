@@ -1,156 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:driver/ui/pages/company/company.dart'; // Pastikan untuk menambahkan ini
+import 'package:driver/ui/pages/company/company.dart';
+import 'package:driver/ui/pages/inventory/data.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({super.key});
+
+  @override
+  HomeState createState() => HomeState();
+}
+
+class HomeState extends State<Home> {
+  int _selectedIndex = 0;
+
+  final List<Widget> _pages = [
+    const HomeContent(),
+    const DataPengiriman(),
+    const Placeholder(), // Replace with your actual History widget
+    Placeholder(), // Replace with your actual Profile widget
+  ];
+
+  void onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header dengan avatar dan teks selamat datang
-              Container(
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF009688),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  children: [
-                    const CircleAvatar(
-                      radius: 30,
-                      backgroundImage: AssetImage(
-                          'assets/avatar.png'), // Ganti dengan gambar Anda
-                    ),
-                    const SizedBox(width: 16),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Andhika Trisna Putra',
-                          style: GoogleFonts.poppins(
-                            textStyle: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.yellow,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Selamat datang kembali!',
-                          style: GoogleFonts.poppins(
-                            textStyle: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // Dashboard Heading
-              Text(
-                'Dashboard',
-                style: GoogleFonts.poppins(
-                  textStyle: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // Card Inventory
-              buildDashboardCard(
-                context,
-                'Inventory',
-                'Data Pengiriman',
-                'assets/images/inventory.png', // Ganti dengan ikon yang sesuai
-                const Color(0xFF04A5A5), // Warna latar belakang card
-                onTap: () {
-                  // Tambahkan navigasi ke halaman lain jika diperlukan
-                },
-              ),
-
-              const SizedBox(height: 20),
-
-              // Card History
-              buildDashboardCard(
-                context,
-                'History',
-                'Riwayat',
-                'assets/images/history.png', // Ganti dengan ikon yang sesuai
-                const Color(0xFF04A5A5), // Warna latar belakang card
-                onTap: () {
-                  // Tambahkan navigasi ke halaman lain jika diperlukan
-                },
-              ),
-
-              const SizedBox(height: 20),
-
-              // Card Company Profile
-              buildDashboardCard(
-                context,
-                'Company Profile',
-                'Profil Perusahaan',
-                'assets/images/company.png', // Ganti dengan ikon yang sesuai
-                const Color(0xFF04A5A5), // Warna latar belakang card
-                borderColor: Colors.blue, // Border biru untuk card terakhir
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const CompanyProfile()),
-                  );
-                },
-              ),
-
-              const SizedBox(height: 20),
-
-              // Notifikasi
-              const Divider(thickness: 1),
-              Center(
-                child: Text(
-                  'Notifikasi',
-                  style: GoogleFonts.poppins(
-                    textStyle: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-              ),
-              const Divider(thickness: 1),
-              const SizedBox(height: 10),
-
-              // Notifikasi Cards
-              buildNotificationCard(context,
-                  'Barang dengan ID: (xxxxxxxxx) berhasil ditambahkan ke dalam inventory Anda!'),
-              const SizedBox(height: 10),
-              buildNotificationCard(context,
-                  'Barang dengan ID: (xxxxxxxxx) berhasil ditambahkan ke dalam inventory Anda!'),
-              const SizedBox(height: 10),
-              buildNotificationCard(context,
-                  'Barang dengan ID: (xxxxxxxxx) berhasil ditambahkan ke dalam inventory Anda!'),
-            ],
-          ),
-        ),
-      ),
-      // Bottom Navigation Bar
+      body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -170,8 +49,160 @@ class Home extends StatelessWidget {
             label: '',
           ),
         ],
+        currentIndex: _selectedIndex,
         selectedItemColor: Colors.teal,
         unselectedItemColor: Colors.grey,
+        onTap: onItemTapped,
+      ),
+    );
+  }
+}
+
+class HomeContent extends StatelessWidget {
+  const HomeContent({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header dengan avatar dan teks selamat datang
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: const Color(0xFF009688),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                children: [
+                  const CircleAvatar(
+                    radius: 30,
+                    backgroundImage: AssetImage(
+                        'assets/avatar.png'), // Ganti dengan gambar Anda
+                  ),
+                  const SizedBox(width: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Andhika Trisna Putra',
+                        style: GoogleFonts.poppins(
+                          textStyle: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.yellow,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Selamat datang kembali!',
+                        style: GoogleFonts.poppins(
+                          textStyle: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Dashboard Heading
+            Text(
+              'Dashboard',
+              style: GoogleFonts.poppins(
+                textStyle: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Card Inventory
+            buildDashboardCard(
+              context,
+              'Inventory',
+              'Data Pengiriman',
+              'assets/images/inventory.png', // Ganti dengan ikon yang sesuai
+              const Color(0xFF04A5A5), // Warna latar belakang card
+              onTap: () {
+                final homeState = context.findAncestorStateOfType<HomeState>();
+                homeState?.onItemTapped(1);
+              },
+            ),
+
+            const SizedBox(height: 20),
+
+            // Card History
+            buildDashboardCard(
+              context,
+              'History',
+              'Riwayat',
+              'assets/images/history.png', // Ganti dengan ikon yang sesuai
+              const Color(0xFF04A5A5), // Warna latar belakang card
+              onTap: () {
+                // Handle navigation or actions here
+              },
+            ),
+
+            const SizedBox(height: 20),
+
+            // Card Company Profile
+            buildDashboardCard(
+              context,
+              'Company Profile',
+              'Profil Perusahaan',
+              'assets/images/company.png', // Ganti dengan ikon yang sesuai
+              const Color(0xFF04A5A5), // Warna latar belakang card
+              borderColor: Colors.blue, // Border biru untuk card terakhir
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const CompanyProfile()),
+                );
+              },
+            ),
+
+            const SizedBox(height: 20),
+
+            // Notifikasi
+            const Divider(thickness: 1),
+            Center(
+              child: Text(
+                'Notifikasi',
+                style: GoogleFonts.poppins(
+                  textStyle: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ),
+            const Divider(thickness: 1),
+            const SizedBox(height: 10),
+
+            // Notifikasi Cards
+            buildNotificationCard(context,
+                'Barang dengan ID: (xxxxxxxxx) berhasil ditambahkan ke dalam inventory Anda!'),
+            const SizedBox(height: 10),
+            buildNotificationCard(context,
+                'Barang dengan ID: (xxxxxxxxx) berhasil ditambahkan ke dalam inventory Anda!'),
+            const SizedBox(height: 10),
+            buildNotificationCard(context,
+                'Barang dengan ID: (xxxxxxxxx) berhasil ditambahkan ke dalam inventory Anda!'),
+          ],
+        ),
       ),
     );
   }
@@ -205,10 +236,10 @@ class Home extends StatelessWidget {
               children: [
                 Image.asset(
                   iconPath,
-                  width: 70,
-                  height: 70,
+                  width: 50,
+                  height: 50,
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
