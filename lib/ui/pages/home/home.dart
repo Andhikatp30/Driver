@@ -1,6 +1,6 @@
-import 'package:driver/ui/pages/history/history.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:driver/ui/pages/history/history.dart';
 import 'package:driver/ui/pages/company/company.dart';
 import 'package:driver/ui/pages/inventory/data.dart';
 import 'package:driver/ui/pages/profile/profile.dart';
@@ -77,6 +77,14 @@ class HomeContent extends StatelessWidget {
               decoration: BoxDecoration(
                 color: const Color(0xFF009688),
                 borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: Row(
                 children: [
@@ -94,7 +102,7 @@ class HomeContent extends StatelessWidget {
                           textStyle: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.yellow,
+                            color: Colors.yellowAccent,
                           ),
                         ),
                       ),
@@ -123,7 +131,7 @@ class HomeContent extends StatelessWidget {
                   textStyle: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color: Colors.black87,
                   ),
                 ),
               ),
@@ -136,7 +144,7 @@ class HomeContent extends StatelessWidget {
               'Inventory',
               'Data Pengiriman',
               'assets/images/inventory.png',
-              const Color(0xFF04A5A5), // Warna latar belakang card
+              const Color(0xFF04A5A5),
               onTap: () {
                 final homeState = context.findAncestorStateOfType<HomeState>();
                 homeState?.onItemTapped(1);
@@ -151,10 +159,10 @@ class HomeContent extends StatelessWidget {
               'History',
               'Riwayat',
               'assets/images/history.png',
-              const Color(0xFF04A5A5), // Warna latar belakang card
+              const Color(0xFF04A5A5),
               onTap: () {
                 final homeState = context.findAncestorStateOfType<HomeState>();
-                homeState?.onItemTapped(1);
+                homeState?.onItemTapped(2);
               },
             ),
 
@@ -166,8 +174,7 @@ class HomeContent extends StatelessWidget {
               'Company Profile',
               'Profil Perusahaan',
               'assets/images/company.png',
-              const Color(0xFF04A5A5), // Warna latar belakang card
-              // borderColor: Colors.blue, // Border biru untuk card terakhir
+              const Color(0xFF04A5A5),
               onTap: () {
                 Navigator.push(
                   context,
@@ -188,7 +195,7 @@ class HomeContent extends StatelessWidget {
                   textStyle: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color: Colors.black87,
                   ),
                 ),
               ),
@@ -213,7 +220,7 @@ class HomeContent extends StatelessWidget {
 
   Widget buildDashboardCard(BuildContext context, String title, String subtitle,
       String iconPath, Color bgColor,
-      {Color? borderColor, VoidCallback? onTap}) {
+      {VoidCallback? onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -221,9 +228,6 @@ class HomeContent extends StatelessWidget {
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(15),
-          border: borderColor != null
-              ? Border.all(color: borderColor, width: 2)
-              : null,
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.5),
@@ -297,14 +301,22 @@ class HomeContent extends StatelessWidget {
 
   Widget buildNotificationCard(BuildContext context, String message) {
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.teal[600],
         borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          const Icon(Icons.notification_important, color: Colors.yellow),
+          const Icon(Icons.notification_important, color: Colors.yellowAccent),
           const SizedBox(width: 10),
           Expanded(
             child: Text(

@@ -1,5 +1,4 @@
 import 'package:driver/ui/pages/splash/splashtwo.dart';
-// import 'package:apk_febsa/ui/widget/theme.dart';
 import 'package:flutter/material.dart';
 
 class Splash extends StatefulWidget {

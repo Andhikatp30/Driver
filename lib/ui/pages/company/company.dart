@@ -41,6 +41,14 @@ class CompanyProfile extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Colors.grey[200],
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 2,
+                      blurRadius: 10,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
                 ),
                 child: Center(
                   child: Image.asset(
@@ -54,10 +62,18 @@ class CompanyProfile extends StatelessWidget {
 
               // Nama Perusahaan dan Deskripsi
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: Colors.teal[50],
                   borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      spreadRadius: 2,
+                      blurRadius: 10,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,19 +82,19 @@ class CompanyProfile extends StatelessWidget {
                       'Sinergi Lintas Global',
                       style: GoogleFonts.poppins(
                         textStyle: const TextStyle(
-                          fontSize: 18,
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: Colors.black87,
                         ),
                       ),
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      'Sinergi Lintas Global atau S-Log adalah Sinergi Lintas Global atau S-Log adalah Sinergi Lintas Global atau S-Log adalah Sinergi Lintas Global atau S-Log adalah Sinergi Lintas Global atau S-Log adalah Sinergi Lintas Global atau S-Log adalah Sinergi Lintas Global atau S-Log adalah Sinergi Lintas Global atau S-Log adalah Sinergi Lintas Global atau S-Log adalah Sinergi Lintas Global atau S-Log adalah Sinergi Lintas Global atau S-Log adalah Sinergi Lintas Global atau S-Log adalah Sinergi Lintas Global atau S-Log adalah Sinergi Lintas Global atau S-Log adalah Sinergi Lintas Global atau S-Log adalah Sinergi Lintas Global atau S-Log adalah Sinergi Lintas Global atau S-Log adalah...',
+                      'Sinergi Lintas Global atau S-Log adalah perusahaan yang bergerak di bidang logistik dan distribusi, berkomitmen untuk memberikan pelayanan terbaik kepada pelanggan kami. Kami bangga menjadi mitra yang dapat diandalkan dalam mengelola dan mengoptimalkan rantai pasok, memastikan produk dan layanan Anda sampai ke tangan pelanggan tepat waktu dan dalam kondisi sempurna.',
                       style: GoogleFonts.poppins(
                         textStyle: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.black,
+                          fontSize: 16,
+                          color: Colors.black54,
                           height: 1.5,
                         ),
                       ),
