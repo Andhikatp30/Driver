@@ -27,7 +27,7 @@ class SplashScreenFour extends StatelessWidget {
                   ),
                 ),
                 Image.asset(
-                  "assets/images/splashfour.png",
+                  "assets/images/splashtwo.png",
                   width: MediaQuery.of(context).size.width,
                   height: 325,
                 ),
@@ -53,7 +53,7 @@ class SplashScreenFour extends StatelessWidget {
                         child: Column(
                           children: [
                             Text(
-                              "Finder",
+                              "Friendly",
                               textAlign: TextAlign.center,
                               style: GoogleFonts.poppins(
                                 textStyle: const TextStyle(
@@ -66,9 +66,9 @@ class SplashScreenFour extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.all(25.0),
                               child: Text(
-                                "aaaaa",
+                                "Antarmuka yang ramah pengguna, memastikan pengemudi dapat menavigasi dan menggunakan fitur dengan mudah.",
                                 maxLines: 7,
-                                textAlign: TextAlign.justify,
+                                textAlign: TextAlign.center,
                                 style: GoogleFonts.poppins(
                                   textStyle: const TextStyle(
                                     fontSize: 15,
@@ -133,8 +133,7 @@ class SplashScreenFour extends StatelessWidget {
                                     style: GoogleFonts.poppins(
                                       textStyle: const TextStyle(
                                         fontSize: 14,
-                                        color:
-                                            Color.fromARGB(255, 197, 219, 255),
+                                        color: Color.fromRGBO(255, 208, 0, 1),
                                         fontWeight: FontWeight.normal,
                                       ),
                                     ),

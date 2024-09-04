@@ -6,7 +6,10 @@ import 'package:driver/ui/pages/inventory/data.dart';
 import 'package:driver/ui/pages/profile/profile.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  final String userName; // Add a userName parameter
+
+  const Home({Key? key, required this.userName})
+      : super(key: key); // Make userName required
 
   @override
   HomeState createState() => HomeState();
@@ -14,13 +17,6 @@ class Home extends StatefulWidget {
 
 class HomeState extends State<Home> {
   int _selectedIndex = 0;
-
-  final List<Widget> _pages = [
-    const HomeContent(),
-    const DataPengiriman(),
-    const History(),
-    const Profile(),
-  ];
 
   void onItemTapped(int index) {
     setState(() {
@@ -30,6 +26,12 @@ class HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> _pages = [
+      HomeContent(userName: widget.userName), // Remove 'const'
+      const DataPengiriman(),
+      const History(),
+      const Profile(),
+    ];
     return Scaffold(
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -61,7 +63,10 @@ class HomeState extends State<Home> {
 }
 
 class HomeContent extends StatelessWidget {
-  const HomeContent({super.key});
+  final String userName; // Add a userName parameter to HomeContent
+
+  const HomeContent(
+      {super.key, required this.userName}); // Make userName required
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +76,7 @@ class HomeContent extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header dengan avatar dan teks selamat datang
+            // Header with avatar and welcome message
             Container(
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
@@ -97,7 +102,7 @@ class HomeContent extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Andhika Trisna Putra',
+                        userName, // Display the passed userName here
                         style: GoogleFonts.poppins(
                           textStyle: const TextStyle(
                             fontSize: 18,
@@ -186,7 +191,7 @@ class HomeContent extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // Notifikasi
+            // Notification
             const Divider(thickness: 1),
             Center(
               child: Text(
@@ -203,7 +208,7 @@ class HomeContent extends StatelessWidget {
             const Divider(thickness: 1),
             const SizedBox(height: 10),
 
-            // Notifikasi Cards
+            // Notification Cards
             buildNotificationCard(context,
                 'Barang dengan ID: (xxxxxxxxx) berhasil ditambahkan ke dalam inventory Anda!'),
             const SizedBox(height: 10),
