@@ -11,6 +11,7 @@ class DataPengiriman extends StatefulWidget {
   const DataPengiriman({super.key, required this.userName}); // Make userName required
 
   @override
+  // ignore: library_private_types_in_public_api
   _DataPengirimanState createState() => _DataPengirimanState();
 }
 
@@ -38,12 +39,15 @@ class _DataPengirimanState extends State<DataPengiriman> {
             pengirimanList = List<Map<String, dynamic>>.from(data['data']);
           });
         } else {
+          // ignore: avoid_print
           print('Error: ${data['message']}');
         }
       } else {
+        // ignore: avoid_print
         print('Failed to load pengiriman data');
       }
     } catch (e) {
+      // ignore: avoid_print
       print('Error fetching pengiriman data: $e');
     }
   }
@@ -145,7 +149,8 @@ class _DataPengirimanState extends State<DataPengiriman> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => DetailBarang(
-                          kurirName: widget.userName, // Teruskan userName ke detail
+                          kurirName: widget.userName,
+                          idPengiriman: pengiriman['id_pengiriman'], // Teruskan userName ke detail
                         ),
                       ));
                 },

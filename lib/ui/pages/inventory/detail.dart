@@ -5,8 +5,10 @@ import 'package:http/http.dart' as http;
 
 class DetailBarang extends StatefulWidget {
   final String kurirName; // Tambahkan parameter untuk kurirName
+  final String idPengiriman;
 
-  const DetailBarang({super.key, required this.kurirName});
+  const DetailBarang(
+      {super.key, required this.kurirName, required this.idPengiriman});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -35,6 +37,7 @@ class _DetailBarangState extends State<DetailBarang> {
         Uri.parse('http://10.0.2.2/api/detail_barang.php'), // URL API
         body: {
           'kurirName': widget.kurirName,
+          'id_pengiriman': widget.idPengiriman,
         },
         headers: {"Content-Type": "application/x-www-form-urlencoded"},
       );
@@ -61,37 +64,40 @@ class _DetailBarangState extends State<DetailBarang> {
 
   Future<void> updateStatusBarang(String statusBaru) async {
     try {
-      print(
-          'Mengirim data: kurirName = ${widget.kurirName}, id_pengiriman = ${barangData!['id_pengiriman']}, status = $statusBaru');
       final response = await http.post(
-        Uri.parse(
-            'http://10.0.2.2/api/update_status.php'), // URL API untuk update status
+        Uri.parse('http://10.0.2.2/api/update_status.php'),
         body: {
           'kurirName': widget.kurirName,
-          'id_pengiriman':
-              barangData!['id_pengiriman'], // ID barang yang akan diperbarui
+          'id_pengiriman': barangData!['id_pengiriman'],
           'status': statusBaru,
         },
         headers: {"Content-Type": "application/x-www-form-urlencoded"},
       );
 
+      // Log untuk memastikan data yang dikirim benar
+      // ignore: avoid_print
       print(
-          'Response body: ${response.body}'); // Tambahkan ini untuk melihat isi respons
+          'Mengirim data: kurirName = ${widget.kurirName}, id_pengiriman = ${barangData!['id_pengiriman']}, status = $statusBaru');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['status'] == 'success') {
           setState(() {
-            _status = statusBaru; // Perbarui status di UI
+            _status = statusBaru;
           });
-          print('Status berhasil diperbarui');
+          // Kembali ke layar 'data.dart'
+          // ignore: use_build_context_synchronously
+          Navigator.of(context).pop();
         } else {
+          // ignore: avoid_print
           print('Error: ${data['message']}');
         }
       } else {
+        // ignore: avoid_print
         print('Failed to update status');
       }
     } catch (e) {
+      // ignore: avoid_print
       print('Error updating status: $e');
     }
   }
@@ -121,10 +127,8 @@ class _DetailBarangState extends State<DetailBarang> {
       ),
       backgroundColor: Colors.white,
       body: barangData == null
-          // ignore: prefer_const_constructors
-          ? Center(
+          ? const Center(
               child:
-                  // ignore: prefer_const_constructors
                   CircularProgressIndicator()) // Menampilkan loading jika data belum ada
           : SingleChildScrollView(
               child: Padding(
@@ -174,16 +178,38 @@ class _DetailBarangState extends State<DetailBarang> {
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(color: Colors.grey),
                         ),
-                        child: barangData!['foto_barang_url'] != null
+                        child: barangData!['foto_barang'] != null
                             ? Image.network(
-                                barangData![
-                                    'foto_barang_url'], // Menggunakan URL absolut yang benar
+                                barangData!['foto_barang'],
                                 fit: BoxFit.cover,
                               )
                             : const Center(
                                 child: Icon(Icons.image,
                                     color: Colors.grey, size: 50),
                               ),
+                      ),
+                      const SizedBox(
+                          height: 20), // Tambahkan jarak antara foto dan tombol
+                      ElevatedButton(
+                        onPressed: () {
+                          updateStatusBarang(
+                              _status); // Memanggil fungsi untuk update status
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue, // Warna tombol
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        child: Text(
+                          'Simpan',
+                          style: GoogleFonts.poppins(
+                            textStyle: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -215,9 +241,7 @@ class _DetailBarangState extends State<DetailBarang> {
           Expanded(
             flex: 3,
             child: DropdownButtonFormField<String>(
-              value: _statusOptions.contains(_status)
-                  ? _status
-                  : null, // Pastikan nilai awal valid
+              value: _statusOptions.contains(_status) ? _status : null,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
               ),
@@ -229,8 +253,9 @@ class _DetailBarangState extends State<DetailBarang> {
               }).toList(),
               onChanged: (newValue) {
                 if (newValue != null) {
-                  updateStatusBarang(
-                      newValue); // Panggil fungsi untuk update status
+                  setState(() {
+                    _status = newValue; // Simpan status baru dalam state
+                  });
                 }
               },
             ),

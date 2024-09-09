@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class DetailRiwayat extends StatelessWidget {
-  const DetailRiwayat({super.key});
+  final Map<String, dynamic> pengiriman; // Tambahkan parameter pengiriman
+
+  const DetailRiwayat(
+      {super.key, required this.pengiriman}); // Membuat parameter wajib
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +48,7 @@ class DetailRiwayat extends StatelessWidget {
                   color: Colors.grey.withOpacity(0.2),
                   spreadRadius: 2,
                   blurRadius: 5,
-                  offset: const Offset(0, 3), // Mengubah posisi bayangan
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
@@ -57,19 +60,17 @@ class DetailRiwayat extends StatelessWidget {
                 const SizedBox(height: 20),
                 buildSectionTitle('Informasi Barang'),
                 const Divider(color: Colors.grey),
-                buildInfoRow('ID Pengiriman', '12345678'),
-                buildInfoRow('ID Barang', '12345678'),
-                buildInfoRow('Nama Barang', 'Alat Kesehatan'),
+                buildInfoRow('ID Pengiriman', pengiriman['id_transaksi']),
+                buildInfoRow('ID Barang', pengiriman['id_barang']),
+                buildInfoRow('Nama Barang', pengiriman['nama_barang']),
                 const SizedBox(height: 20),
                 buildSectionTitle('Detail Pengiriman'),
                 const Divider(color: Colors.grey),
-                buildInfoRow(
-                    'Nama Instansi', 'Badan Kesehatan Daerah Jakarta Barat'),
-                buildInfoRow('Penerima', 'Rumah Sakit XYZ Jakarta Utara'),
-                buildInfoRow('Jenis Barang', 'Sedang'),
-                // buildEditableStatus(),
-                buildInfoRow('Status', 'Selesai'),
-                buildInfoRow('Tanggal Kirim', '2024-09-19'),
+                buildInfoRow('Nama Instansi', pengiriman['nama_instansi']),
+                buildInfoRow('Alamat Instansi', pengiriman['alamat_instansi']),
+                buildInfoRow('Jenis Barang', pengiriman['jenis_barang']),
+                buildInfoRow('Status', pengiriman['status_pengiriman']),
+                buildInfoRow('Tanggal Kirim', pengiriman['tanggal_kirim']),
                 const SizedBox(height: 20),
                 buildSectionTitle('Foto Barang'),
                 const Divider(color: Colors.grey),
@@ -81,9 +82,16 @@ class DetailRiwayat extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: Colors.grey),
                   ),
-                  child: const Center(
-                    child: Icon(Icons.image, color: Colors.grey, size: 50),
-                  ),
+                  child: pengiriman['foto_barang'] != null &&
+                          pengiriman['foto_barang'].isNotEmpty
+                      ? Image.network(
+                          pengiriman['foto_barang'],
+                          fit: BoxFit.cover,
+                        )
+                      : const Center(
+                          child:
+                              Icon(Icons.image, color: Colors.grey, size: 50),
+                        ),
                 ),
               ],
             ),
@@ -112,56 +120,7 @@ class DetailRiwayat extends StatelessWidget {
     );
   }
 
-  // Widget buildEditableStatus() {
-  //   String _status = 'Dalam Perjalanan';
-  //   List<String> _statusOptions = [
-  //     'Dalam Perjalanan',
-  //     'Sudah Sampai',
-  //     'Dibatalkan'
-  //   ];
-
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(vertical: 8.0),
-  //     child: Row(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Expanded(
-  //           flex: 2,
-  //           child: Text(
-  //             'Status',
-  //             style: GoogleFonts.poppins(
-  //               textStyle: const TextStyle(
-  //                 fontSize: 14,
-  //                 fontWeight: FontWeight.w600,
-  //                 color: Colors.black87,
-  //               ),
-  //             ),
-  //           ),
-  //         ),
-  //         Expanded(
-  //           flex: 3,
-  //           child: DropdownButtonFormField<String>(
-  //             value: _status,
-  //             decoration: const InputDecoration(
-  //               border: OutlineInputBorder(),
-  //             ),
-  //             items: _statusOptions.map((String value) {
-  //               return DropdownMenuItem<String>(
-  //                 value: value,
-  //                 child: Text(value, style: GoogleFonts.poppins(fontSize: 14)),
-  //               );
-  //             }).toList(),
-  //             onChanged: (newValue) {
-  //               // Logika untuk menangani perubahan status
-  //             },
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  Widget buildInfoRow(String title, String value) {
+  Widget buildInfoRow(String title, String? value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -183,7 +142,8 @@ class DetailRiwayat extends StatelessWidget {
           Expanded(
             flex: 3,
             child: Text(
-              value,
+              value ??
+                  'Tidak Tersedia', // Gunakan nilai default jika value adalah null
               style: GoogleFonts.poppins(
                 textStyle: const TextStyle(
                   fontSize: 14,

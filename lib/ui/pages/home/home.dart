@@ -34,7 +34,7 @@ class HomeState extends State<Home> {
     final List<Widget> _pages = [
       HomeContent(userName: widget.userName),
       DataPengiriman(userName: widget.userName),
-      const History(),
+      History(userName: widget.userName),
       const Profile(),
     ];
     return Scaffold(
