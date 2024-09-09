@@ -1,9 +1,52 @@
-import 'package:driver/ui/pages/home/home.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
+import 'package:driver/ui/pages/home/home.dart';
+import 'package:driver/ui/pages/inventory/detail.dart';
 
-class DataPengiriman extends StatelessWidget {
-  const DataPengiriman({super.key});
+class DataPengiriman extends StatefulWidget {
+  final String userName; // Tambahkan parameter userName
+
+  const DataPengiriman({super.key, required this.userName}); // Make userName required
+
+  @override
+  _DataPengirimanState createState() => _DataPengirimanState();
+}
+
+class _DataPengirimanState extends State<DataPengiriman> {
+  List<Map<String, dynamic>> pengirimanList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchPengirimanData();
+  }
+
+  Future<void> fetchPengirimanData() async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2/api/pengiriman.php'),
+        body: {'kurirName': widget.userName}, // Gunakan widget.userName
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['status'] == 'success') {
+          setState(() {
+            pengirimanList = List<Map<String, dynamic>>.from(data['data']);
+          });
+        } else {
+          print('Error: ${data['message']}');
+        }
+      } else {
+        print('Failed to load pengiriman data');
+      }
+    } catch (e) {
+      print('Error fetching pengiriman data: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,26 +67,25 @@ class DataPengiriman extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.blue),
           onPressed: () {
-            // Navigator.of(context).pop(); // Navigate back to the previous screen
             final homeState = context.findAncestorStateOfType<HomeState>();
             homeState?.onItemTapped(0);
           },
         ),
       ),
-      backgroundColor: Colors.grey[100], // Soft grey background for contrast
+      backgroundColor: Colors.grey[100],
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: ListView.builder(
-          itemCount: 4, // Jumlah item dalam list
+          itemCount: pengirimanList.length,
           itemBuilder: (context, index) {
-            return buildCard(index + 1, context);
+            return buildCard(pengirimanList[index], context);
           },
         ),
       ),
     );
   }
 
-  Widget buildCard(int itemNumber, BuildContext context) {
+  Widget buildCard(Map<String, dynamic> pengiriman, BuildContext context) {
     return GestureDetector(
       onTap: () {
         // Aksi ketika card ditekan
@@ -52,9 +94,7 @@ class DataPengiriman extends StatelessWidget {
         elevation: 5,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
-          side: itemNumber == 1
-              ? const BorderSide(color: Colors.blueAccent, width: 2)
-              : BorderSide.none,
+          side: const BorderSide(color: Colors.blueAccent, width: 2),
         ),
         color: Colors.white,
         margin: const EdgeInsets.only(bottom: 15),
@@ -67,7 +107,7 @@ class DataPengiriman extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'ID Barang: ${itemNumber == 1 ? '12345678' : 'xxxxxxxxxxxx'}',
+                    'ID Pengiriman: ${pengiriman['id_pengiriman']}',
                     style: GoogleFonts.poppins(
                       textStyle: const TextStyle(
                         fontSize: 18,
@@ -78,7 +118,16 @@ class DataPengiriman extends StatelessWidget {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    'Nama Barang: ${itemNumber == 1 ? 'Alat Kesehatan' : 'xxxxxxxxxxxx'}',
+                    'Nama Barang: ${pengiriman['nama_barang']}',
+                    style: GoogleFonts.poppins(
+                      textStyle: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.black54,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    'ID Barang: ${pengiriman['id_barang']}',
                     style: GoogleFonts.poppins(
                       textStyle: const TextStyle(
                         fontSize: 16,
@@ -92,7 +141,13 @@ class DataPengiriman extends StatelessWidget {
                 icon: const Icon(Icons.info_outline,
                     color: Colors.blueAccent, size: 30),
                 onPressed: () {
-                  // Aksi ketika tombol info ditekan
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DetailBarang(
+                          kurirName: widget.userName, // Teruskan userName ke detail
+                        ),
+                      ));
                 },
               ),
             ],

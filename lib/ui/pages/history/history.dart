@@ -1,3 +1,4 @@
+import 'package:driver/ui/pages/history/detail.dart';
 import 'package:driver/ui/pages/home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -93,6 +94,11 @@ class History extends StatelessWidget {
                     color: Colors.blueAccent, size: 30),
                 onPressed: () {
                   // Aksi ketika tombol info ditekan
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const DetailRiwayat()),
+                  );
                 },
               ),
             ],

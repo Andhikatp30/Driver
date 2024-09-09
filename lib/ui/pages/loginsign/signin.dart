@@ -56,6 +56,7 @@ class _SignState extends State<Sign> {
     final data = jsonDecode(response.body);
     if (data['status'] == 'success') {
       AwesomeDialog(
+        // ignore: use_build_context_synchronously
         context: context,
         dialogType: DialogType.success,
         animType: AnimType.topSlide,
@@ -72,6 +73,7 @@ class _SignState extends State<Sign> {
     } else {
       // Handle error
       AwesomeDialog(
+        // ignore: use_build_context_synchronously
         context: context,
         dialogType: DialogType.error,
         animType: AnimType.topSlide,

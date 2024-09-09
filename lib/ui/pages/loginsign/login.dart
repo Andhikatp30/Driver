@@ -32,12 +32,14 @@ class _LoginState extends State<Login> {
       String userName =
           data['name'] ?? 'User'; // Fallback in case 'name' is null
       Navigator.pushReplacement(
+        // ignore: use_build_context_synchronously
         context,
         MaterialPageRoute(
           builder: (context) => Home(userName: userName),
         ),
       );
     } else {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(data['message'])),
       );
