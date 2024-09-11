@@ -1,19 +1,24 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http; // Import http package
+import 'package:http/http.dart' as http;
 
 import 'package:driver/ui/pages/history/history.dart';
 import 'package:driver/ui/pages/company/company.dart';
 import 'package:driver/ui/pages/inventory/data.dart';
 import 'package:driver/ui/pages/profile/profile.dart';
+// import 'package:driver/ui/pages/maps/maps.dart';
 
 class Home extends StatefulWidget {
   final String userName; // Add a userName parameter
+  final String userUsername;
 
   // ignore: use_super_parameters
-  const Home({Key? key, required this.userName})
-      : super(key: key); // Make userName required
+  const Home({
+    Key? key,
+    required this.userName,
+    required this.userUsername,
+  }) : super(key: key);
 
   @override
   HomeState createState() => HomeState();
@@ -34,9 +39,15 @@ class HomeState extends State<Home> {
     final List<Widget> _pages = [
       HomeContent(userName: widget.userName),
       DataPengiriman(userName: widget.userName),
+      // ignore: prefer_const_constructors
+      // MapsPage(), // Tambahkan halaman Maps baru
       History(userName: widget.userName),
-      const Profile(),
+      Profile(
+        name: widget.userName,
+        username: widget.userUsername,
+      ),
     ];
+
     return Scaffold(
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -49,6 +60,10 @@ class HomeState extends State<Home> {
             icon: Icon(Icons.inventory),
             label: '',
           ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.map), // Menambahkan ikon untuk Maps
+          //   label: '',
+          // ),
           BottomNavigationBarItem(
             icon: Icon(Icons.history),
             label: '',
@@ -117,8 +132,7 @@ class _HomeContentState extends State<HomeContent> {
           });
         } else {
           // ignore: avoid_print
-          print(
-              'Error: ${data['message']}'); // Pesan error jika tidak ada notifikasi
+          print('Error: ${data['message']}');
         }
       } else {
         // ignore: avoid_print
@@ -138,7 +152,6 @@ class _HomeContentState extends State<HomeContent> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header with avatar and welcome message
             Container(
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
@@ -189,8 +202,6 @@ class _HomeContentState extends State<HomeContent> {
               ),
             ),
             const SizedBox(height: 20),
-
-            // Dashboard Heading
             Center(
               child: Text(
                 'Dashboard',
@@ -204,8 +215,6 @@ class _HomeContentState extends State<HomeContent> {
               ),
             ),
             const SizedBox(height: 20),
-
-            // Card Inventory
             buildDashboardCard(
               context,
               'Inventory',
@@ -217,10 +226,7 @@ class _HomeContentState extends State<HomeContent> {
                 homeState?.onItemTapped(1);
               },
             ),
-
             const SizedBox(height: 20),
-
-            // Card History
             buildDashboardCard(
               context,
               'History',
@@ -232,10 +238,7 @@ class _HomeContentState extends State<HomeContent> {
                 homeState?.onItemTapped(2);
               },
             ),
-
             const SizedBox(height: 20),
-
-            // Card Company Profile
             buildDashboardCard(
               context,
               'Company Profile',
@@ -250,10 +253,7 @@ class _HomeContentState extends State<HomeContent> {
                 );
               },
             ),
-
             const SizedBox(height: 20),
-
-            // Notification
             const Divider(thickness: 1),
             Center(
               child: Text(
@@ -269,12 +269,8 @@ class _HomeContentState extends State<HomeContent> {
             ),
             const Divider(thickness: 1),
             const SizedBox(height: 10),
-
-            // Render Notification Cards from Database
             ...notifications
-                .map((notif) => buildNotificationCard(context, notif))
-                // ignore: unnecessary_to_list_in_spreads
-                .toList(),
+                .map((notif) => buildNotificationCard(context, notif)),
           ],
         ),
       ),
@@ -365,8 +361,7 @@ class _HomeContentState extends State<HomeContent> {
   Widget buildNotificationCard(
       BuildContext context, Map<String, dynamic> notif) {
     return Container(
-      margin: const EdgeInsets.symmetric(
-          vertical: 8), // Menambahkan margin vertikal antara kartu
+      margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.teal[600],

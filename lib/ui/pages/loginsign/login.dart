@@ -31,11 +31,16 @@ class _LoginState extends State<Login> {
     if (data['status'] == 'success') {
       String userName =
           data['name'] ?? 'User'; // Fallback in case 'name' is null
+      String userUsername = data['username'] ?? ''; // Tambahkan data username
+
       Navigator.pushReplacement(
         // ignore: use_build_context_synchronously
         context,
         MaterialPageRoute(
-          builder: (context) => Home(userName: userName),
+          builder: (context) => Home(
+            userName: userName,
+            userUsername: userUsername,
+          ),
         ),
       );
     } else {

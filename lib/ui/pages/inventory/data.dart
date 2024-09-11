@@ -8,7 +8,8 @@ import 'package:driver/ui/pages/inventory/detail.dart';
 class DataPengiriman extends StatefulWidget {
   final String userName; // Tambahkan parameter userName
 
-  const DataPengiriman({super.key, required this.userName}); // Make userName required
+  const DataPengiriman(
+      {super.key, required this.userName}); // Make userName required
 
   @override
   // ignore: library_private_types_in_public_api
@@ -150,7 +151,8 @@ class _DataPengirimanState extends State<DataPengiriman> {
                       MaterialPageRoute(
                         builder: (context) => DetailBarang(
                           kurirName: widget.userName,
-                          idPengiriman: pengiriman['id_pengiriman'], // Teruskan userName ke detail
+                          idPengiriman: pengiriman[
+                              'id_pengiriman'], // Teruskan userName ke detail
                         ),
                       ));
                 },

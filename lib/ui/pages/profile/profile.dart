@@ -1,12 +1,19 @@
 import 'package:driver/ui/pages/home/home.dart';
-import 'package:driver/ui/pages/loginsign/login.dart';
-import 'package:driver/ui/pages/profile/changepassword.dart';
-import 'package:driver/ui/pages/profile/editprofile.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:driver/ui/pages/profile/changepassword.dart';
+import 'package:driver/ui/pages/profile/editprofile.dart';
+import 'package:driver/ui/pages/loginsign/login.dart';
 
 class Profile extends StatelessWidget {
-  const Profile({super.key});
+  final String name;
+  final String username;
+
+  const Profile({
+    super.key,
+    required this.name,
+    required this.username,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +52,7 @@ class Profile extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               Text(
-                'Andhika Trisna Putra',
+                name,
                 style: GoogleFonts.poppins(
                   textStyle: const TextStyle(
                     fontSize: 24,
@@ -71,11 +78,9 @@ class Profile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildProfileDetail('Nama', 'Andhika Trisna Putra'),
+                    _buildProfileDetail('Nama', name),
                     const Divider(color: Colors.teal, thickness: 1),
-                    _buildProfileDetail('Username', 'andhikaxyz'),
-                    const Divider(color: Colors.teal, thickness: 1),
-                    _buildProfileDetail('Email', 'andhikaxyz@gmail.com'),
+                    _buildProfileDetail('Username', username),
                   ],
                 ),
               ),
@@ -86,11 +91,13 @@ class Profile extends StatelessWidget {
                 Icons.edit,
                 Colors.teal,
                 onTap: () {
-                  // Tambahkan aksi ketika tombol Edit Profile ditekan
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const EditProfile()),
+                        builder: (context) => EditProfile(
+                              currentName: name,
+                              currentUsername: username,
+                            )),
                   );
                 },
               ),
@@ -101,7 +108,6 @@ class Profile extends StatelessWidget {
                 Icons.lock,
                 Colors.teal,
                 onTap: () {
-                  // Tambahkan aksi ketika tombol Change Password ditekan
                   Navigator.push(
                     context,
                     MaterialPageRoute(

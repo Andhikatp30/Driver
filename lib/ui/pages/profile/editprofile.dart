@@ -1,8 +1,78 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 
-class EditProfile extends StatelessWidget {
-  const EditProfile({super.key});
+class EditProfile extends StatefulWidget {
+  final String currentName;
+  final String currentUsername;
+
+  const EditProfile({
+    super.key,
+    required this.currentName,
+    required this.currentUsername,
+  });
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _EditProfileState createState() => _EditProfileState();
+}
+
+class _EditProfileState extends State<EditProfile> {
+  late TextEditingController nameController;
+  late TextEditingController usernameController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Inisialisasi controller dengan nilai yang diterima
+    nameController = TextEditingController(text: widget.currentName);
+    usernameController = TextEditingController(text: widget.currentUsername);
+  }
+
+  @override
+  void dispose() {
+    // Bersihkan controller ketika tidak digunakan untuk menghindari kebocoran memori
+    nameController.dispose();
+    usernameController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _saveProfile() async {
+    // URL endpoint API Anda
+    const String apiUrl =
+        'https://10.0.2.2/api/editProfile.php'; // Gantilah dengan URL API Anda
+
+    // Data yang akan dikirimkan ke API
+    final Map<String, String> body = {
+      'name': nameController.text,
+      'username': usernameController.text,
+    };
+
+    try {
+      // Kirim permintaan POST ke API
+      final response = await http.post(Uri.parse(apiUrl), body: body);
+
+      if (response.statusCode == 200) {
+        // Jika berhasil, tampilkan pesan sukses
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profil berhasil diperbarui!')),
+        );
+      } else {
+        // Jika gagal, tampilkan pesan kesalahan
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Gagal memperbarui profil.')),
+        );
+      }
+    } catch (e) {
+      // Tangani kesalahan yang terjadi
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Terjadi kesalahan: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,16 +155,13 @@ class EditProfile extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 30),
-            buildTextField('Nama'),
+            buildTextField('Nama', nameController),
             const SizedBox(height: 15),
-            buildTextField('Username'),
+            buildTextField('Username', usernameController),
             const SizedBox(height: 15),
-            buildTextField('Email'),
-            const SizedBox(height: 30),
             ElevatedButton(
-              onPressed: () {
-                // Tambahkan aksi ketika tombol Simpan ditekan
-              },
+              onPressed:
+                  _saveProfile, // Panggil fungsi _saveProfile saat tombol ditekan
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 shape: RoundedRectangleBorder(
@@ -120,8 +187,9 @@ class EditProfile extends StatelessWidget {
     );
   }
 
-  Widget buildTextField(String hintText) {
+  Widget buildTextField(String hintText, TextEditingController controller) {
     return TextField(
+      controller: controller,
       decoration: InputDecoration(
         hintText: hintText,
         filled: true,
