@@ -40,7 +40,11 @@ class CompanyProfile extends StatelessWidget {
                 height: 150,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.grey[200],
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFE3F2FD), Color(0xFFBBDEFB)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.1),
@@ -64,7 +68,11 @@ class CompanyProfile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.teal[50],
+                  gradient: const LinearGradient(
+                    colors: [Colors.white, Color(0xFFE0F7FA)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                   borderRadius: BorderRadius.circular(15),
                   boxShadow: [
                     BoxShadow(
@@ -129,6 +137,10 @@ class CompanyProfile extends StatelessWidget {
         ],
         selectedItemColor: Colors.teal,
         unselectedItemColor: Colors.grey,
+        showUnselectedLabels: false,
+        backgroundColor: Colors.white,
+        type: BottomNavigationBarType.fixed,
+        elevation: 5,
       ),
     );
   }

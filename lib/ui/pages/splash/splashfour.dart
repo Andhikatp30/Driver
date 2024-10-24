@@ -49,16 +49,16 @@ class SplashScreenFour extends StatelessWidget {
                       ),
                       child: Padding(
                         padding:
-                            const EdgeInsets.only(left: 15, right: 15, top: 45),
+                            const EdgeInsets.only(left: 30, right: 30, top: 50),
                         child: Column(
                           children: [
                             Text(
-                              "Friendly",
+                              "Flexible",
                               textAlign: TextAlign.center,
                               style: GoogleFonts.poppins(
                                 textStyle: const TextStyle(
                                     fontSize: 35,
-                                    color: Colors.white,
+                                    color: Colors.amber,
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -66,19 +66,19 @@ class SplashScreenFour extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.all(25.0),
                               child: Text(
-                                "Antarmuka yang ramah pengguna, memastikan pengemudi dapat menavigasi dan menggunakan fitur dengan mudah.",
+                                "Fleksibilitas ini memungkinkan pengemudi mengoptimalkan waktu dan usaha, meningkatkan efisiensi secara keseluruhan",
                                 maxLines: 7,
-                                textAlign: TextAlign.center,
+                                textAlign: TextAlign.justify,
                                 style: GoogleFonts.poppins(
                                   textStyle: const TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 16,
                                     color: Colors.white,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 35),
+                            const SizedBox(height: 25),
                             ElevatedButton(
                               onPressed: () {
                                 Navigator.push(
@@ -88,10 +88,10 @@ class SplashScreenFour extends StatelessWidget {
                               },
                               style: ElevatedButton.styleFrom(
                                   shape: const StadiumBorder(),
-                                  elevation: 8,
+                                  elevation: 5,
                                   shadowColor: Colors.black,
                                   backgroundColor: Colors.white,
-                                  minimumSize: const Size.fromHeight(45)),
+                                  minimumSize: const Size.fromHeight(50)),
                               child: Text(
                                 "Masuk",
                                 textAlign: TextAlign.center,
@@ -109,11 +109,11 @@ class SplashScreenFour extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Apakah kamu sudah memiliki akun ?",
+                                  "Belum memiliki akun ?",
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.poppins(
                                     textStyle: const TextStyle(
-                                      fontSize: 14,
+                                      fontSize: 15,
                                       color: Colors.white,
                                       fontWeight: FontWeight.normal,
                                     ),
@@ -132,7 +132,7 @@ class SplashScreenFour extends StatelessWidget {
                                     textAlign: TextAlign.center,
                                     style: GoogleFonts.poppins(
                                       textStyle: const TextStyle(
-                                        fontSize: 14,
+                                        fontSize: 15,
                                         color: Color.fromRGBO(255, 208, 0, 1),
                                         fontWeight: FontWeight.normal,
                                       ),

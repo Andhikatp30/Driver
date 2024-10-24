@@ -41,8 +41,31 @@ class _SignState extends State<Sign> {
     });
   }
 
-  // Function to register the user
+  // Function to check if all fields are filled
+  bool _areFieldsFilled() {
+    return namaController.text.isNotEmpty &&
+        usernameController.text.isNotEmpty &&
+        passwordController.text.isNotEmpty &&
+        umurController.text.isNotEmpty &&
+        alamatController.text.isNotEmpty;
+  }
+
+  // Function to register the user with validation
   Future<void> registerKurir() async {
+    if (!_areFieldsFilled()) {
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.warning,
+        animType: AnimType.topSlide,
+        title: "Form Incomplete",
+        desc: "Harap isi semua data!",
+        btnOkOnPress: () {},
+        btnOkColor: Colors.orange,
+        btnOkText: 'OK',
+      ).show();
+      return;
+    }
+
     final url = Uri.parse('http://10.0.2.2/api/register.php');
     final response = await http.post(url, body: {
       'nama': namaController.text,
@@ -71,7 +94,6 @@ class _SignState extends State<Sign> {
         },
       ).show();
     } else {
-      // Handle error
       AwesomeDialog(
         // ignore: use_build_context_synchronously
         context: context,
@@ -88,7 +110,7 @@ class _SignState extends State<Sign> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF009688), // Green background
+      backgroundColor: const Color(0xFF009688), // Background warna lembut
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
         child: SingleChildScrollView(
@@ -99,26 +121,28 @@ class _SignState extends State<Sign> {
                 'Register',
                 style: GoogleFonts.poppins(
                   textStyle: const TextStyle(
-                    fontSize: 30,
+                    fontSize: 34,
                     fontWeight: FontWeight.bold,
-                    color: Colors.yellowAccent,
+                    color: Colors.white, // Warna teks modern
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
               buildInputField('Nama', 'Masukan Nama', namaController),
               const SizedBox(height: 20),
               buildInputField(
                   'Username', 'Masukan Username', usernameController),
               const SizedBox(height: 20),
-              Text(
-                "Gender",
-                textAlign: TextAlign.left,
-                style: GoogleFonts.poppins(
-                  textStyle: const TextStyle(
-                    fontSize: 15,
-                    color: Colors.white,
-                    fontWeight: FontWeight.normal,
+              Align(
+                alignment: Alignment.bottomLeft,
+                child: Text(
+                  "Gender",
+                  style: GoogleFonts.poppins(
+                    textStyle: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
               ),
@@ -143,6 +167,8 @@ class _SignState extends State<Sign> {
                 },
                 child: buildRegisterButton(),
               ),
+              const SizedBox(height: 10),
+              buildLoginPrompt(),
             ],
           ),
         ),
@@ -159,9 +185,9 @@ class _SignState extends State<Sign> {
           label,
           style: GoogleFonts.poppins(
             textStyle: const TextStyle(
-              fontSize: 15,
+              fontSize: 16,
               color: Colors.white,
-              fontWeight: FontWeight.normal,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),
@@ -173,7 +199,7 @@ class _SignState extends State<Sign> {
             color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black.withOpacity(0.1), // Bayangan lembut
                 spreadRadius: 2,
                 blurRadius: 5,
                 offset: const Offset(0, 3),
@@ -192,9 +218,7 @@ class _SignState extends State<Sign> {
                 borderSide: BorderSide.none,
               ),
             ),
-            style: const TextStyle(
-              color: Colors.black,
-            ),
+            style: const TextStyle(color: Colors.black),
           ),
         ),
       ],
@@ -204,7 +228,9 @@ class _SignState extends State<Sign> {
   Widget buildGenderButton(String text, Color color, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
         width: 140,
         height: 45,
         decoration: BoxDecoration(
@@ -212,7 +238,7 @@ class _SignState extends State<Sign> {
           borderRadius: BorderRadius.circular(25),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withOpacity(0.1),
               spreadRadius: 2,
               blurRadius: 5,
               offset: const Offset(0, 3),
@@ -244,9 +270,9 @@ class _SignState extends State<Sign> {
           textAlign: TextAlign.left,
           style: GoogleFonts.poppins(
             textStyle: const TextStyle(
-              fontSize: 15,
+              fontSize: 16,
               color: Colors.white,
-              fontWeight: FontWeight.normal,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),
@@ -258,7 +284,7 @@ class _SignState extends State<Sign> {
             color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black.withOpacity(0.1),
                 spreadRadius: 2,
                 blurRadius: 5,
                 offset: const Offset(0, 3),
@@ -286,9 +312,7 @@ class _SignState extends State<Sign> {
                 },
               ),
             ),
-            style: const TextStyle(
-              color: Colors.black,
-            ),
+            style: const TextStyle(color: Colors.black),
             obscureText: _obscureText,
           ),
         ),
@@ -303,13 +327,13 @@ class _SignState extends State<Sign> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
         gradient: const LinearGradient(
-          colors: [Colors.blue, Colors.purple],
+          colors: [Colors.blue, Colors.blueAccent],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withOpacity(0.1),
             spreadRadius: 2,
             blurRadius: 5,
             offset: const Offset(0, 3),
@@ -330,7 +354,42 @@ class _SignState extends State<Sign> {
       ),
     );
   }
+
+  Widget buildLoginPrompt() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          "Sudah punya akun?",
+          style: GoogleFonts.poppins(
+            textStyle: const TextStyle(
+              fontSize: 14,
+              color: Colors.white,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const Login()));
+          },
+          child: Text(
+            "Login",
+            style: GoogleFonts.poppins(
+              textStyle: const TextStyle(
+                fontSize: 14,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }
+
 
 
 

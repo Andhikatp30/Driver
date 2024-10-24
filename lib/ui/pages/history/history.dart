@@ -31,14 +31,10 @@ class _HistoryState extends State<History> {
     try {
       final response = await http.post(
         Uri.parse(
-            'http://10.0.2.2/api/history.php'), // Ganti dengan URL API Anda
-        body: {'kurirName': widget.userName}, // Menggunakan widget.userName
+            'http://10.0.2.2/api/history.php'),
+        body: {'kurirName': widget.userName},
         headers: {"Content-Type": "application/x-www-form-urlencoded"},
       );
-
-      // Tambahkan debug print untuk melihat respons
-      // ignore: avoid_print
-      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);

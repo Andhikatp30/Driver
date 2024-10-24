@@ -4,20 +4,24 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
 class DetailBarang extends StatefulWidget {
-  final String kurirName; // Tambahkan parameter untuk kurirName
+  final String kurirName;
   final String idPengiriman;
+  final String fotoBarangUrl; // URL foto barang
 
-  const DetailBarang(
-      {super.key, required this.kurirName, required this.idPengiriman});
+  const DetailBarang({
+    Key? key,
+    required this.kurirName,
+    required this.idPengiriman,
+    required this.fotoBarangUrl,
+  }) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _DetailBarangState createState() => _DetailBarangState();
 }
 
 class _DetailBarangState extends State<DetailBarang> {
-  String _status = ''; // Status default
-  Map<String, dynamic>? barangData; // Menyimpan data barang
+  String _status = '';
+  Map<String, dynamic>? barangData;
 
   final List<String> _statusOptions = [
     'Dikirim',
@@ -28,13 +32,13 @@ class _DetailBarangState extends State<DetailBarang> {
   @override
   void initState() {
     super.initState();
-    fetchDetailBarang(); // Panggil fungsi untuk mengambil data barang
+    fetchDetailBarang();
   }
 
   Future<void> fetchDetailBarang() async {
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2/api/detail_barang.php'), // URL API
+        Uri.parse('http://10.0.2.2/api/detail_barang.php'),
         body: {
           'kurirName': widget.kurirName,
           'id_pengiriman': widget.idPengiriman,
@@ -46,7 +50,7 @@ class _DetailBarangState extends State<DetailBarang> {
         final data = jsonDecode(response.body);
         if (data['status'] == 'success') {
           setState(() {
-            barangData = data['data']; // Simpan data barang
+            barangData = data['data'];
           });
         } else {
           // ignore: avoid_print
@@ -74,7 +78,6 @@ class _DetailBarangState extends State<DetailBarang> {
         headers: {"Content-Type": "application/x-www-form-urlencoded"},
       );
 
-      // Log untuk memastikan data yang dikirim benar
       // ignore: avoid_print
       print(
           'Mengirim data: kurirName = ${widget.kurirName}, id_pengiriman = ${barangData!['id_pengiriman']}, status = $statusBaru');
@@ -85,7 +88,6 @@ class _DetailBarangState extends State<DetailBarang> {
           setState(() {
             _status = statusBaru;
           });
-          // Kembali ke layar 'data.dart'
           // ignore: use_build_context_synchronously
           Navigator.of(context).pop();
         } else {
@@ -121,15 +123,13 @@ class _DetailBarangState extends State<DetailBarang> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.blue),
           onPressed: () {
-            Navigator.of(context).pop(); // Kembali ke layar sebelumnya
+            Navigator.of(context).pop();
           },
         ),
       ),
       backgroundColor: Colors.white,
       body: barangData == null
-          ? const Center(
-              child:
-                  CircularProgressIndicator()) // Menampilkan loading jika data belum ada
+          ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -137,11 +137,16 @@ class _DetailBarangState extends State<DetailBarang> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(15),
+                    gradient: const LinearGradient(
+                      colors: [Colors.white, Color(0xFFE3F2FD)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.2),
                         spreadRadius: 2,
-                        blurRadius: 5,
+                        blurRadius: 7,
                         offset: const Offset(0, 3),
                       ),
                     ],
@@ -152,51 +157,53 @@ class _DetailBarangState extends State<DetailBarang> {
                     children: [
                       buildSectionTitle('Informasi Barang'),
                       const Divider(color: Colors.grey),
-                      buildInfoRow(
-                          'ID Pengiriman', barangData!['id_pengiriman']),
+                      buildInfoRow('ID Pengiriman', barangData!['id_pengiriman']),
                       buildInfoRow('ID Barang', barangData!['id_barang']),
                       buildInfoRow('Nama Barang', barangData!['nama_barang']),
                       const SizedBox(height: 20),
                       buildSectionTitle('Detail Pengiriman'),
                       const Divider(color: Colors.grey),
-                      buildInfoRow(
-                          'Nama Instansi', barangData!['nama_instansi']),
-                      buildInfoRow(
-                          'Alamat Instansi', barangData!['alamat_instansi']),
+                      buildInfoRow('Nama Instansi', barangData!['nama_instansi']),
+                      buildInfoRow('Alamat Instansi', barangData!['alamat_instansi']),
                       buildInfoRow('Jenis Barang', barangData!['jenis_barang']),
                       buildEditableStatus(),
-                      buildInfoRow(
-                          'Tanggal Kirim', barangData!['tanggal_kirim']),
+                      buildInfoRow('Tanggal Kirim', barangData!['tanggal_kirim']),
                       const SizedBox(height: 20),
                       buildSectionTitle('Foto Barang'),
                       const Divider(color: Colors.grey),
                       Container(
-                        height: 100,
+                        height: 150,
                         width: double.infinity,
                         decoration: BoxDecoration(
                           color: Colors.grey[200],
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(color: Colors.grey),
                         ),
-                        child: barangData!['foto_barang'] != null
-                            ? Image.network(
-                                barangData!['foto_barang'],
-                                fit: BoxFit.cover,
+                        child: barangData!['foto_barang_url'] != null
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.network(
+                                  barangData!['foto_barang_url'],
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Center(
+                                        child: Icon(Icons.broken_image,
+                                            size: 50, color: Colors.grey));
+                                  },
+                                ),
                               )
                             : const Center(
                                 child: Icon(Icons.image,
                                     color: Colors.grey, size: 50),
                               ),
                       ),
-                      const SizedBox(
-                          height: 20), // Tambahkan jarak antara foto dan tombol
+                      const SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: () {
-                          updateStatusBarang(
-                              _status); // Memanggil fungsi untuk update status
+                          updateStatusBarang(_status);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue, // Warna tombol
+                          backgroundColor: Colors.blue,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
@@ -254,7 +261,7 @@ class _DetailBarangState extends State<DetailBarang> {
               onChanged: (newValue) {
                 if (newValue != null) {
                   setState(() {
-                    _status = newValue; // Simpan status baru dalam state
+                    _status = newValue;
                   });
                 }
               },

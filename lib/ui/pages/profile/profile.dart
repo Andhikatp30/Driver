@@ -1,11 +1,11 @@
 import 'package:driver/ui/pages/home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:driver/ui/pages/profile/changepassword.dart';
-import 'package:driver/ui/pages/profile/editprofile.dart';
+// import 'package:driver/ui/pages/profile/changepassword.dart';
+// import 'package:driver/ui/pages/profile/editprofile.dart';
 import 'package:driver/ui/pages/loginsign/login.dart';
 
-class Profile extends StatelessWidget {
+class Profile extends StatefulWidget {
   final String name;
   final String username;
 
@@ -14,6 +14,23 @@ class Profile extends StatelessWidget {
     required this.name,
     required this.username,
   });
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _ProfileState createState() => _ProfileState();
+}
+
+class _ProfileState extends State<Profile> {
+  late String name;
+  late String username;
+
+  @override
+  void initState() {
+    super.initState();
+    // Inisialisasi variabel dengan data yang diterima dari widget
+    name = widget.name;
+    username = widget.username;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +81,11 @@ class Profile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE0F7FA),
+                  gradient: const LinearGradient(
+                    colors: [Colors.white, Color(0xFFE0F7FA)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
@@ -84,37 +105,50 @@ class Profile extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 30),
-              buildProfileButton(
-                context,
-                'Edit Profile',
-                Icons.edit,
-                Colors.teal,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => EditProfile(
-                              currentName: name,
-                              currentUsername: username,
-                            )),
-                  );
-                },
-              ),
-              const SizedBox(height: 15),
-              buildProfileButton(
-                context,
-                'Change Password',
-                Icons.lock,
-                Colors.teal,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ChangePassword()),
-                  );
-                },
-              ),
+              // const SizedBox(height: 30),
+              // buildProfileButton(
+              //   context,
+              //   'Edit Profile',
+              //   Icons.edit,
+              //   Colors.teal,
+              //   onTap: () async {
+              //     final result = await Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //         builder: (context) => EditProfile(
+              //           currentName: name,
+              //           currentUsername: username,
+              //         ),
+              //       ),
+              //     );
+              //     if (result == true) {
+              //       print('Data returned from EditProfile: $result');
+              //       // Perbarui profil di sini
+              //       setState(() {
+              //         // Memuat ulang data profil atau langsung atur ulang variabel dengan data terbaru
+              //         // name dan username harus diambil dari sumber data terbaru
+              //         name = result['name'];
+              //         username = result['username'];
+              //       });
+              //     } else {
+              //       print('No data returned from EditProfile');
+              //     }
+              //   },
+              // ),
+              // const SizedBox(height: 15),
+              // buildProfileButton(
+              //   context,
+              //   'Change Password',
+              //   Icons.lock,
+              //   Colors.teal,
+              //   onTap: () {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //           builder: (context) => const ChangePassword()),
+              //     );
+              //   },
+              // ),
               const SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
@@ -186,7 +220,11 @@ class Profile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
         decoration: BoxDecoration(
-          color: color,
+          gradient: LinearGradient(
+            colors: [color, color.withOpacity(0.7)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(

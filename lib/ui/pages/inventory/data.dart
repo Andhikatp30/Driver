@@ -153,6 +153,7 @@ class _DataPengirimanState extends State<DataPengiriman> {
                           kurirName: widget.userName,
                           idPengiriman: pengiriman[
                               'id_pengiriman'], // Teruskan userName ke detail
+                          fotoBarangUrl: pengiriman['foto_barang_url'],
                         ),
                       ));
                 },

@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class DetailRiwayat extends StatelessWidget {
-  final Map<String, dynamic> pengiriman; // Tambahkan parameter pengiriman
+  final Map<String, dynamic> pengiriman;
 
-  const DetailRiwayat(
-      {super.key, required this.pengiriman}); // Membuat parameter wajib
+  const DetailRiwayat({super.key, required this.pengiriman});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +30,7 @@ class DetailRiwayat extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.blue),
           onPressed: () {
-            Navigator.of(context).pop(); // Kembali ke layar sebelumnya
+            Navigator.of(context).pop();
           },
         ),
       ),
@@ -46,9 +45,9 @@ class DetailRiwayat extends StatelessWidget {
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.2),
-                  spreadRadius: 2,
-                  blurRadius: 5,
-                  offset: const Offset(0, 3),
+                  spreadRadius: 3,
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
@@ -75,7 +74,8 @@ class DetailRiwayat extends StatelessWidget {
                 buildSectionTitle('Foto Barang'),
                 const Divider(color: Colors.grey),
                 Container(
-                  height: 100,
+                  height:
+                      200, // Meningkatkan tinggi untuk lebih menonjolkan foto
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
@@ -84,13 +84,19 @@ class DetailRiwayat extends StatelessWidget {
                   ),
                   child: pengiriman['foto_barang'] != null &&
                           pengiriman['foto_barang'].isNotEmpty
-                      ? Image.network(
-                          pengiriman['foto_barang'],
-                          fit: BoxFit.cover,
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.network(
+                            pengiriman['foto_barang'],
+                            fit: BoxFit.cover,
+                          ),
                         )
                       : const Center(
-                          child:
-                              Icon(Icons.image, color: Colors.grey, size: 50),
+                          child: Icon(
+                            Icons.image,
+                            color: Colors.grey,
+                            size: 50,
+                          ),
                         ),
                 ),
               ],
@@ -142,8 +148,7 @@ class DetailRiwayat extends StatelessWidget {
           Expanded(
             flex: 3,
             child: Text(
-              value ??
-                  'Tidak Tersedia', // Gunakan nilai default jika value adalah null
+              value ?? 'Tidak Tersedia',
               style: GoogleFonts.poppins(
                 textStyle: const TextStyle(
                   fontSize: 14,

@@ -1,118 +1,72 @@
+// import 'package:driver/ui/pages/home/home.dart';
 // import 'package:flutter/material.dart';
-// import 'package:google_maps_flutter/google_maps_flutter.dart';
-// import 'package:geolocator/geolocator.dart';
+// import 'package:flutter_map/flutter_map.dart';
+// import 'package:google_fonts/google_fonts.dart';
+// import 'package:latlong2/latlong.dart';
 
-// class MapsPage extends StatefulWidget {
-//   const MapsPage({Key? key}) : super(key: key);
+// class MapsPage extends StatelessWidget {
+//   final double latitude;
+//   final double longitude;
 
-//   @override
-//   _MapsPageState createState() => _MapsPageState();
-// }
-
-// class _MapsPageState extends State<MapsPage> {
-//   late GoogleMapController mapController;
-//   final LatLng _initialPosition = const LatLng(-6.200000, 106.816666); // Koordinat pusat Jakarta
-//   Set<Marker> _markers = {};
-//   late Position _currentPosition;
-//   bool _loading = true;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _getCurrentLocation();
-//   }
-
-//   void _onMapCreated(GoogleMapController controller) {
-//     mapController = controller;
-//   }
-
-//   Future<void> _getCurrentLocation() async {
-//     bool serviceEnabled;
-//     LocationPermission permission;
-
-//     // Memeriksa apakah layanan lokasi diaktifkan
-//     serviceEnabled = await Geolocator.isLocationServiceEnabled();
-//     if (!serviceEnabled) {
-//       setState(() {
-//         _loading = false;
-//       });
-//       return Future.error('Layanan lokasi tidak aktif.');
-//     }
-
-//     // Memeriksa izin lokasi
-//     permission = await Geolocator.checkPermission();
-//     if (permission == LocationPermission.denied) {
-//       permission = await Geolocator.requestPermission();
-//       if (permission == LocationPermission.denied) {
-//         setState(() {
-//           _loading = false;
-//         });
-//         return Future.error('Izin lokasi ditolak.');
-//       }
-//     }
-
-//     if (permission == LocationPermission.deniedForever) {
-//       setState(() {
-//         _loading = false;
-//       });
-//       return Future.error('Izin lokasi ditolak selamanya.');
-//     }
-
-//     // Mendapatkan posisi saat ini
-//     _currentPosition = await Geolocator.getCurrentPosition();
-//     setState(() {
-//       _loading = false;
-//       _markers.add(
-//         Marker(
-//           markerId: const MarkerId('currentLocation'),
-//           position: LatLng(_currentPosition.latitude, _currentPosition.longitude),
-//           infoWindow: const InfoWindow(
-//             title: 'Posisi Anda Saat Ini',
-//           ),
-//           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-//         ),
-//       );
-
-//       mapController.animateCamera(
-//         CameraUpdate.newLatLngZoom(
-//           LatLng(_currentPosition.latitude, _currentPosition.longitude),
-//           15.0,
-//         ),
-//       );
-//     });
-//   }
+//   const MapsPage(
+//       {super.key,
+//       required this.latitude,
+//       required this.longitude,
+//       required String address});
 
 //   @override
 //   Widget build(BuildContext context) {
+//     print('Latitude: $latitude, Longitude: $longitude');
+
 //     return Scaffold(
 //       appBar: AppBar(
-//         title: const Text('Peta Lokasi'),
-//         backgroundColor: Colors.teal,
-//         actions: [
-//           IconButton(
-//             icon: const Icon(Icons.refresh),
-//             onPressed: _getCurrentLocation,
-//           ),
-//         ],
-//       ),
-//       body: _loading
-//           ? const Center(child: CircularProgressIndicator())
-//           : GoogleMap(
-//               onMapCreated: _onMapCreated,
-//               initialCameraPosition: CameraPosition(
-//                 target: _initialPosition,
-//                 zoom: 11.0,
-//               ),
-//               markers: _markers,
-//               myLocationEnabled: true,
-//               myLocationButtonEnabled: false, // Menghilangkan tombol lokasi default Google Maps
-//               compassEnabled: true,
-//               mapType: MapType.normal,
+//         title: Text(
+//           'OpenStreetMap',
+//           style: GoogleFonts.poppins(
+//             textStyle: const TextStyle(
+//               fontSize: 22,
+//               fontWeight: FontWeight.w600,
+//               color: Colors.black,
 //             ),
-//       floatingActionButton: FloatingActionButton(
-//         onPressed: _getCurrentLocation,
-//         backgroundColor: Colors.teal,
-//         child: const Icon(Icons.my_location),
+//           ),
+//         ),
+//         backgroundColor: Colors.white,
+//         elevation: 0,
+//         leading: IconButton(
+//           icon: const Icon(Icons.arrow_back, color: Colors.blue),
+//           onPressed: () {
+//             final homeState = context.findAncestorStateOfType<HomeState>();
+//             homeState?.onItemTapped(0);
+//           },
+//         ),
+//       ),
+//       body: FlutterMap(
+//         options: MapOptions(
+//           center: LatLng(
+//               latitude, longitude), // Set map center to the given coordinates
+//           zoom: 13.0,
+//         ),
+//         children: [ 
+//           TileLayer(
+//             urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+//             subdomains: ['a', 'b', 'c'],
+//           ),
+//           MarkerLayer(
+//             markers: [
+//               Marker(
+//                 width: 80.0,
+//                 height: 80.0,
+//                 point: LatLng(latitude ?? 0.0,
+//                     longitude ?? 0.0), // Use default 0.0 if null
+//                 builder: (ctx) => const Icon(
+//                   Icons.location_on,
+//                   color: Colors.red,
+//                   size: 40.0,
+//                 ),
+//               ),
+//             ],
+//           )
+//         ],
 //       ),
 //     );
 //   }

@@ -1,4 +1,5 @@
-import 'package:driver/ui/pages/splash/splashfour.dart';
+// import 'package:driver/ui/pages/splash/splashfour.dart';
+import 'package:driver/ui/pages/splash/splashtwo.dart';
 import 'package:flutter/material.dart';
 
 class Splash extends StatefulWidget {
@@ -13,7 +14,7 @@ class _SplashState extends State<Splash> {
   void initState() {
     Future.delayed(const Duration(seconds: 5)).then((value) => Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const SplashScreenFour()),
+          MaterialPageRoute(builder: (context) => const SplashScreenTwo()),
         ));
     super.initState();
   }

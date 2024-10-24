@@ -1,9 +1,11 @@
 import 'dart:convert'; // for jsonDecode
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http; // for sending HTTP requests
 import 'package:driver/ui/pages/home/home.dart';
 import 'package:driver/ui/pages/loginsign/signin.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -18,8 +20,22 @@ class _LoginState extends State<Login> {
   TextEditingController passwordController = TextEditingController();
 
   Future<void> loginUser() async {
-    final url =
-        Uri.parse('http://10.0.2.2/api/login.php'); // Replace with your IP
+    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+      // Jika ada field yang kosong, tampilkan popup peringatan
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.warning,
+        animType: AnimType.bottomSlide,
+        title: 'Incomplete Data',
+        desc: 'Harap isi username dan password!',
+        btnOkOnPress: () {},
+        btnOkColor: Colors.orange,
+        btnOkText: 'OK',
+      ).show();
+      return;
+    }
+
+    final url = Uri.parse('http://10.0.2.2/api/login.php');
 
     final response = await http.post(url, body: {
       'username': emailController.text,
@@ -29,9 +45,13 @@ class _LoginState extends State<Login> {
     final data = jsonDecode(response.body);
 
     if (data['status'] == 'success') {
-      String userName =
-          data['name'] ?? 'User'; // Fallback in case 'name' is null
-      String userUsername = data['username'] ?? ''; // Tambahkan data username
+      String userName = data['name'] ?? 'User';
+      String userUsername = data['username'] ?? '';
+
+      // // Simpan token ke SharedPreferences
+      // SharedPreferences prefs = await SharedPreferences.getInstance();
+      // await prefs.setString(
+      //     'auth_token', data['token'] ?? ''); // Sesuaikan nama dan nilai token
 
       Navigator.pushReplacement(
         // ignore: use_build_context_synchronously
@@ -61,7 +81,7 @@ class _LoginState extends State<Login> {
             Image.asset(
               "assets/images/logologin.png",
               width: MediaQuery.of(context).size.width,
-              height: 400,
+              height: 375,
               fit: BoxFit.cover,
             ),
             ListView(
@@ -81,13 +101,16 @@ class _LoginState extends State<Login> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "Login",
-                          style: GoogleFonts.poppins(
-                            textStyle: const TextStyle(
-                              fontSize: 28,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            "Login",
+                            style: GoogleFonts.poppins(
+                              textStyle: const TextStyle(
+                                fontSize: 28,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
@@ -236,7 +259,7 @@ class _LoginState extends State<Login> {
         style: GoogleFonts.poppins(
           textStyle: const TextStyle(
             fontSize: 18,
-            color: Colors.deepPurple,
+            color: Colors.black,
             fontWeight: FontWeight.bold,
           ),
         ),

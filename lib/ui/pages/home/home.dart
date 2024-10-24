@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+// import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:driver/ui/pages/history/history.dart';
 import 'package:driver/ui/pages/company/company.dart';
@@ -10,7 +11,7 @@ import 'package:driver/ui/pages/profile/profile.dart';
 // import 'package:driver/ui/pages/maps/maps.dart';
 
 class Home extends StatefulWidget {
-  final String userName; // Add a userName parameter
+  final String userName;
   final String userUsername;
 
   // ignore: use_super_parameters
@@ -39,8 +40,11 @@ class HomeState extends State<Home> {
     final List<Widget> _pages = [
       HomeContent(userName: widget.userName),
       DataPengiriman(userName: widget.userName),
-      // ignore: prefer_const_constructors
-      // MapsPage(), // Tambahkan halaman Maps baru
+      // MapsPage(
+      //   address: 'Sample Address',
+      //   latitude: -6.200000,
+      //   longitude: 106.816666,
+      // ), // Tambahkan halaman Maps baru
       History(userName: widget.userName),
       Profile(
         name: widget.userName,
@@ -50,6 +54,13 @@ class HomeState extends State<Home> {
 
     return Scaffold(
       body: _pages[_selectedIndex],
+      //     body: AnimatedSwitcher(
+      //   duration: const Duration(milliseconds: 500),
+      //   transitionBuilder: (Widget child, Animation<double> animation) {
+      //     return FadeTransition(opacity: animation, child: child);
+      //   },
+      //   child: _pages[_selectedIndex],
+      // ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -74,8 +85,8 @@ class HomeState extends State<Home> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.teal,
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: Colors.green[800],
+        unselectedItemColor: Colors.grey[400],
         onTap: onItemTapped,
       ),
     );
@@ -83,10 +94,9 @@ class HomeState extends State<Home> {
 }
 
 class HomeContent extends StatefulWidget {
-  final String userName; // Add a userName parameter to HomeContent
+  final String userName;
 
-  const HomeContent(
-      {super.key, required this.userName}); // Make userName required
+  const HomeContent({super.key, required this.userName});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -95,7 +105,7 @@ class HomeContent extends StatefulWidget {
 
 class _HomeContentState extends State<HomeContent> {
   List<Map<String, dynamic>> notifications = [];
-  String kurirName = ''; // Nama kurir yang digunakan untuk notifikasi
+  String kurirName = '';
 
   @override
   void initState() {
@@ -107,21 +117,10 @@ class _HomeContentState extends State<HomeContent> {
   Future<void> fetchNotifications() async {
     try {
       final response = await http.post(
-        Uri.parse(
-            'http://10.0.2.2/api/notif.php'), // Ganti dengan URL API yang benar
-        body: {
-          'kurirName': kurirName
-        }, // Pastikan 'kurirName' dikirim sebagai parameter
-        headers: {
-          "Content-Type":
-              "application/x-www-form-urlencoded" // Menyertakan header untuk permintaan POST
-        },
+        Uri.parse('http://10.0.2.2/api/notif.php'),
+        body: {'kurirName': kurirName},
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
       );
-
-      // ignore: avoid_print
-      print('Response status: ${response.statusCode}');
-      // ignore: avoid_print
-      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -155,14 +154,18 @@ class _HomeContentState extends State<HomeContent> {
             Container(
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
-                color: const Color(0xFF009688),
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF009688), Color(0xFF004D40)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withOpacity(0.2),
                     spreadRadius: 2,
-                    blurRadius: 5,
-                    offset: const Offset(0, 2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
@@ -177,7 +180,7 @@ class _HomeContentState extends State<HomeContent> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.userName, // Display the passed userName here
+                        widget.userName,
                         style: GoogleFonts.poppins(
                           textStyle: const TextStyle(
                             fontSize: 18,
@@ -235,7 +238,7 @@ class _HomeContentState extends State<HomeContent> {
               const Color(0xFF04A5A5),
               onTap: () {
                 final homeState = context.findAncestorStateOfType<HomeState>();
-                homeState?.onItemTapped(2);
+                homeState?.onItemTapped(3);
               },
             ),
             const SizedBox(height: 20),
@@ -287,12 +290,17 @@ class _HomeContentState extends State<HomeContent> {
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(15),
+          gradient: LinearGradient(
+            colors: [bgColor, bgColor.withOpacity(0.7)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.5),
               spreadRadius: 2,
-              blurRadius: 5,
-              offset: const Offset(0, 3),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -368,10 +376,10 @@ class _HomeContentState extends State<HomeContent> {
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withOpacity(0.2),
             spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
           ),
         ],
       ),

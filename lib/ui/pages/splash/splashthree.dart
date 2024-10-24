@@ -48,16 +48,18 @@ class SplashScreenThree extends StatelessWidget {
                       ),
                       child: Padding(
                         padding:
-                            const EdgeInsets.only(left: 15, right: 15, top: 20),
+                            const EdgeInsets.only(left: 30, right: 30, top: 20),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             TextButton(
                               onPressed: () {
-                                // Navigator.push(
-                                //   context,
-                                //     MaterialPageRoute(builder: (context) => const SplashScreenFour(),)
-                                // );
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const SplashScreenFour(),
+                                    ));
                               },
                               child: Text(
                                 "skip",
@@ -91,7 +93,7 @@ class SplashScreenThree extends StatelessWidget {
                                 textAlign: TextAlign.justify,
                                 style: GoogleFonts.poppins(
                                   textStyle: const TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 16,
                                     color: Colors.white,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -105,7 +107,7 @@ class SplashScreenThree extends StatelessWidget {
                   ],
                 ),
                 Align(
-                  alignment: const Alignment(0.85, 0.85),
+                  alignment: const Alignment(0.75, 0.85),
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(
