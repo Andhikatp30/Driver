@@ -6,32 +6,29 @@ import 'package:driver/ui/pages/home/home.dart';
 import 'package:driver/ui/pages/history/detail.dart';
 
 class History extends StatefulWidget {
-  final String userName; // Parameter untuk menyimpan nama pengguna
+  final String userName;
 
-  const History(
-      {super.key,
-      required this.userName}); // Menjadikan userName sebagai parameter wajib
+  const History({super.key, required this.userName});
 
   @override
-  // ignore: library_private_types_in_public_api
   _HistoryState createState() => _HistoryState();
 }
 
 class _HistoryState extends State<History> {
-  List<Map<String, dynamic>> historyList = []; // Menyimpan data history
+  List<Map<String, dynamic>> historyList = [];
+  bool isLoading = true; // Loading state
 
   @override
   void initState() {
     super.initState();
-    fetchHistoryData(); // Memanggil data saat inisialisasi
+    fetchHistoryData();
   }
 
-  // Fungsi untuk mengambil data history dari API
   Future<void> fetchHistoryData() async {
+    setState(() => isLoading = true);
     try {
       final response = await http.post(
-        Uri.parse(
-            'http://10.0.2.2/api/history.php'),
+        Uri.parse('http://10.0.2.2/api/history.php'),
         body: {'kurirName': widget.userName},
         headers: {"Content-Type": "application/x-www-form-urlencoded"},
       );
@@ -43,61 +40,92 @@ class _HistoryState extends State<History> {
             historyList = List<Map<String, dynamic>>.from(data['data']);
           });
         } else {
-          // ignore: avoid_print
-          print('Error: ${data['message']}');
+          _showErrorSnackbar('Error: ${data['message']}');
         }
       } else {
-        // ignore: avoid_print
-        print('Failed to load history data');
+        _showErrorSnackbar('Failed to load history data');
       }
     } catch (e) {
-      // ignore: avoid_print
-      print('Error fetching history data: $e');
+      _showErrorSnackbar('Error fetching history data: $e');
+    } finally {
+      setState(() => isLoading = false);
     }
+  }
+
+  void _showErrorSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'History',
-          style: GoogleFonts.poppins(
-            textStyle: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w600,
-              color: Colors.black,
-            ),
-          ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.blue),
-          onPressed: () {
-            final homeState = context.findAncestorStateOfType<HomeState>();
-            homeState?.onItemTapped(0);
-          },
-        ),
-      ),
+      appBar: buildAppBar(context),
       backgroundColor: Colors.grey[100],
       body: Padding(
         padding: const EdgeInsets.all(20),
-        child: ListView.builder(
-          itemCount: historyList.length,
-          itemBuilder: (context, index) {
-            return buildCard(historyList[index], context);
-          },
-        ),
+        child: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : historyList.isEmpty
+                ? Center(
+                    child: Text(
+                      'Tidak ada riwayat pengiriman',
+                      style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black54,
+                      ),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: historyList.length,
+                    itemBuilder: (context, index) {
+                      return HistoryCard(history: historyList[index]);
+                    },
+                  ),
       ),
     );
   }
 
-  // Fungsi untuk membuat kartu tampilan data history
-  Widget buildCard(Map<String, dynamic> history, BuildContext context) {
+  AppBar buildAppBar(BuildContext context) {
+    return AppBar(
+      title: Text(
+        'History',
+        style: GoogleFonts.poppins(
+          fontSize: 22,
+          fontWeight: FontWeight.w600,
+          color: Colors.black,
+        ),
+      ),
+      backgroundColor: Colors.white,
+      elevation: 0,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: Colors.blue),
+        onPressed: () {
+          final homeState = context.findAncestorStateOfType<HomeState>();
+          homeState?.onItemTapped(0);
+        },
+      ),
+    );
+  }
+}
+
+class HistoryCard extends StatelessWidget {
+  final Map<String, dynamic> history;
+
+  const HistoryCard({Key? key, required this.history}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Aksi ketika card ditekan
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailRiwayat(pengiriman: history),
+          ),
+        );
       },
       child: Card(
         elevation: 5,
@@ -112,31 +140,25 @@ class _HistoryState extends State<History> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'ID Transaksi: ${history['id_transaksi']}',
-                    style: GoogleFonts.poppins(
-                      textStyle: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    buildInfoText(
+                      title: 'ID Pengiriman',
+                      value: history['id_pengiriman'],
+                      isBold: true,
                     ),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    'Nama Barang: ${history['nama_barang']}',
-                    style: GoogleFonts.poppins(
-                      textStyle: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.black54,
-                      ),
-                    ),
-                  ),
-                ],
+                    const SizedBox(height: 5),
+                    buildInfoText(
+                        title: 'ID Barang', value: history['id_barang']),
+                    const SizedBox(height: 5),
+                    buildInfoText(
+                        title: 'Nama Barang', value: history['nama_barang']),
+                  ],
+                ),
               ),
+              const SizedBox(width: 10),
               IconButton(
                 icon: const Icon(Icons.info_outline,
                     color: Colors.blueAccent, size: 30),
@@ -144,14 +166,27 @@ class _HistoryState extends State<History> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => DetailRiwayat(
-                          pengiriman: history), // Hapus 'const' di sini
+                      builder: (context) => DetailRiwayat(pengiriman: history),
                     ),
                   );
                 },
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildInfoText(
+      {required String title, required String value, bool isBold = false}) {
+    return Text(
+      '$title: $value',
+      style: GoogleFonts.poppins(
+        textStyle: TextStyle(
+          fontSize: isBold ? 18 : 16,
+          fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+          color: isBold ? Colors.black87 : Colors.black54,
         ),
       ),
     );

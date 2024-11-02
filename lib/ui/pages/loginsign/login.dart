@@ -1,11 +1,10 @@
-import 'dart:convert'; // for jsonDecode
+import 'dart:convert';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http; // for sending HTTP requests
+import 'package:http/http.dart' as http;
 import 'package:driver/ui/pages/home/home.dart';
 import 'package:driver/ui/pages/loginsign/signin.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -16,59 +15,69 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   bool _obscureText = true;
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  bool _isLoading = false;
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   Future<void> loginUser() async {
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
-      // Jika ada field yang kosong, tampilkan popup peringatan
-      AwesomeDialog(
-        context: context,
-        dialogType: DialogType.warning,
-        animType: AnimType.bottomSlide,
-        title: 'Incomplete Data',
-        desc: 'Harap isi username dan password!',
-        btnOkOnPress: () {},
-        btnOkColor: Colors.orange,
-        btnOkText: 'OK',
-      ).show();
+      _showWarningDialog('Incomplete Data', 'Harap isi username dan password!');
       return;
     }
 
+    setState(() => _isLoading = true);
     final url = Uri.parse('http://10.0.2.2/api/login.php');
 
-    final response = await http.post(url, body: {
-      'username': emailController.text,
-      'password': passwordController.text,
-    });
+    try {
+      final response = await http.post(url, body: {
+        'username': emailController.text,
+        'password': passwordController.text,
+      });
 
-    final data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['status'] == 'success') {
+          String userName = data['name'] ?? 'User';
+          String userUsername = data['username'] ?? '';
 
-    if (data['status'] == 'success') {
-      String userName = data['name'] ?? 'User';
-      String userUsername = data['username'] ?? '';
-
-      // // Simpan token ke SharedPreferences
-      // SharedPreferences prefs = await SharedPreferences.getInstance();
-      // await prefs.setString(
-      //     'auth_token', data['token'] ?? ''); // Sesuaikan nama dan nilai token
-
-      Navigator.pushReplacement(
-        // ignore: use_build_context_synchronously
-        context,
-        MaterialPageRoute(
-          builder: (context) => Home(
-            userName: userName,
-            userUsername: userUsername,
-          ),
-        ),
-      );
-    } else {
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(data['message'])),
-      );
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Home(
+                userName: userName,
+                userUsername: userUsername,
+              ),
+            ),
+          );
+        } else {
+          _showSnackBar(data['message']);
+        }
+      } else {
+        _showSnackBar("Server error: ${response.statusCode}");
+      }
+    } catch (e) {
+      _showSnackBar("An error occurred. Please check your connection.");
+    } finally {
+      setState(() => _isLoading = false);
     }
+  }
+
+  void _showWarningDialog(String title, String desc) {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.warning,
+      animType: AnimType.bottomSlide,
+      title: title,
+      desc: desc,
+      btnOkOnPress: () {},
+      btnOkColor: Colors.orange,
+      btnOkText: 'OK',
+    ).show();
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -90,9 +99,8 @@ class _LoginState extends State<Login> {
                 Container(
                   width: MediaQuery.of(context).size.width,
                   decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(45),
-                    ),
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(45)),
                     color: Colors.teal,
                   ),
                   child: Padding(
@@ -121,38 +129,18 @@ class _LoginState extends State<Login> {
                             textStyle: const TextStyle(
                               fontSize: 14,
                               color: Colors.white,
-                              fontWeight: FontWeight.normal,
                             ),
                           ),
                         ),
                         const SizedBox(height: 25),
-                        Text(
-                          "Username",
-                          style: GoogleFonts.poppins(
-                            textStyle: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
+                        _buildLabel("Username"),
                         const SizedBox(height: 12),
                         buildTextField(
                             emailController, 'Masukan username', Icons.person),
                         const SizedBox(height: 20),
-                        Text(
-                          "Password",
-                          style: GoogleFonts.poppins(
-                            textStyle: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
+                        _buildLabel("Password"),
                         const SizedBox(height: 12),
-                        buildPasswordTextField(
-                            passwordController, _obscureText),
+                        buildPasswordTextField(passwordController),
                         const SizedBox(height: 35),
                         buildLoginButton(),
                         const SizedBox(height: 15),
@@ -163,7 +151,24 @@ class _LoginState extends State<Login> {
                 ),
               ],
             ),
+            if (_isLoading)
+              const Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLabel(String text) {
+    return Text(
+      text,
+      style: GoogleFonts.poppins(
+        textStyle: const TextStyle(
+          fontSize: 16,
+          color: Colors.white,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );
@@ -202,8 +207,7 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget buildPasswordTextField(
-      TextEditingController controller, bool obscureText) {
+  Widget buildPasswordTextField(TextEditingController controller) {
     return Container(
       height: 50,
       decoration: BoxDecoration(
@@ -230,7 +234,7 @@ class _LoginState extends State<Login> {
           ),
           prefixIcon: const Icon(Icons.lock_outlined),
           suffixIcon: IconButton(
-            icon: Icon(obscureText ? Icons.visibility : Icons.visibility_off),
+            icon: Icon(_obscureText ? Icons.visibility : Icons.visibility_off),
             onPressed: () {
               setState(() {
                 _obscureText = !_obscureText;
@@ -239,7 +243,7 @@ class _LoginState extends State<Login> {
           ),
         ),
         style: const TextStyle(color: Colors.black),
-        obscureText: obscureText,
+        obscureText: _obscureText,
       ),
     );
   }
@@ -277,7 +281,6 @@ class _LoginState extends State<Login> {
             textStyle: const TextStyle(
               fontSize: 14,
               color: Colors.white,
-              fontWeight: FontWeight.normal,
             ),
           ),
         ),

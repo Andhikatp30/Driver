@@ -40,10 +40,8 @@ class HomeState extends State<Home> {
     final List<Widget> _pages = [
       HomeContent(userName: widget.userName),
       DataPengiriman(userName: widget.userName),
-      // MapsPage(
+      // const MapsPage(
       //   address: 'Sample Address',
-      //   latitude: -6.200000,
-      //   longitude: 106.816666,
       // ), // Tambahkan halaman Maps baru
       History(userName: widget.userName),
       Profile(
@@ -105,6 +103,7 @@ class HomeContent extends StatefulWidget {
 
 class _HomeContentState extends State<HomeContent> {
   List<Map<String, dynamic>> notifications = [];
+  bool isLoading = true;
   String kurirName = '';
 
   @override
@@ -128,18 +127,22 @@ class _HomeContentState extends State<HomeContent> {
           setState(() {
             notifications =
                 List<Map<String, dynamic>>.from(data['notifications']);
+                isLoading = false;
           });
         } else {
           // ignore: avoid_print
           print('Error: ${data['message']}');
+          setState(() => isLoading = false);
         }
       } else {
         // ignore: avoid_print
         print('Failed to load notifications: ${response.statusCode}');
+        setState(() => isLoading = false);
       }
     } catch (e) {
       // ignore: avoid_print
       print('Error fetching notifications: $e');
+      setState(() => isLoading = false);
     }
   }
 
@@ -238,7 +241,7 @@ class _HomeContentState extends State<HomeContent> {
               const Color(0xFF04A5A5),
               onTap: () {
                 final homeState = context.findAncestorStateOfType<HomeState>();
-                homeState?.onItemTapped(3);
+                homeState?.onItemTapped(2);
               },
             ),
             const SizedBox(height: 20),
@@ -260,7 +263,7 @@ class _HomeContentState extends State<HomeContent> {
             const Divider(thickness: 1),
             Center(
               child: Text(
-                'Notifikasi',
+                'Barang Pengiriman',
                 style: GoogleFonts.poppins(
                   textStyle: const TextStyle(
                     fontSize: 18,
@@ -272,7 +275,7 @@ class _HomeContentState extends State<HomeContent> {
             ),
             const Divider(thickness: 1),
             const SizedBox(height: 10),
-            ...notifications
+            ...notifications  
                 .map((notif) => buildNotificationCard(context, notif)),
           ],
         ),

@@ -2,22 +2,21 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
-import 'package:driver/ui/pages/home/home.dart';
 import 'package:driver/ui/pages/inventory/detail.dart';
+import 'package:driver/ui/pages/home/home.dart';
 
 class DataPengiriman extends StatefulWidget {
-  final String userName; // Tambahkan parameter userName
+  final String userName;
 
-  const DataPengiriman(
-      {super.key, required this.userName}); // Make userName required
+  const DataPengiriman({super.key, required this.userName});
 
   @override
-  // ignore: library_private_types_in_public_api
   _DataPengirimanState createState() => _DataPengirimanState();
 }
 
 class _DataPengirimanState extends State<DataPengiriman> {
   List<Map<String, dynamic>> pengirimanList = [];
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -29,7 +28,7 @@ class _DataPengirimanState extends State<DataPengiriman> {
     try {
       final response = await http.post(
         Uri.parse('http://10.0.2.2/api/pengiriman.php'),
-        body: {'kurirName': widget.userName}, // Gunakan widget.userName
+        body: {'kurirName': widget.userName},
         headers: {"Content-Type": "application/x-www-form-urlencoded"},
       );
 
@@ -38,63 +37,75 @@ class _DataPengirimanState extends State<DataPengiriman> {
         if (data['status'] == 'success') {
           setState(() {
             pengirimanList = List<Map<String, dynamic>>.from(data['data']);
+            isLoading = false;
           });
         } else {
-          // ignore: avoid_print
-          print('Error: ${data['message']}');
+          _showError("Error: ${data['message']}");
         }
       } else {
-        // ignore: avoid_print
-        print('Failed to load pengiriman data');
+        _showError("Failed to load pengiriman data: ${response.statusCode}");
       }
     } catch (e) {
-      // ignore: avoid_print
-      print('Error fetching pengiriman data: $e');
+      _showError("Error fetching pengiriman data: $e");
     }
+  }
+
+  void _showError(String message) {
+    setState(() {
+      isLoading = false;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Data Pengiriman',
-          style: GoogleFonts.poppins(
-            textStyle: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w600,
-              color: Colors.black,
-            ),
-          ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.blue),
-          onPressed: () {
-            final homeState = context.findAncestorStateOfType<HomeState>();
-            homeState?.onItemTapped(0);
-          },
-        ),
-      ),
+      appBar: buildAppBar(context),
       backgroundColor: Colors.grey[100],
       body: Padding(
         padding: const EdgeInsets.all(20),
-        child: ListView.builder(
-          itemCount: pengirimanList.length,
-          itemBuilder: (context, index) {
-            return buildCard(pengirimanList[index], context);
-          },
-        ),
+        child: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : ListView.builder(
+                itemCount: pengirimanList.length,
+                itemBuilder: (context, index) {
+                  return buildPengirimanCard(pengirimanList[index], context);
+                },
+              ),
       ),
     );
   }
 
-  Widget buildCard(Map<String, dynamic> pengiriman, BuildContext context) {
+  AppBar buildAppBar(BuildContext context) {
+    return AppBar(
+      title: Text(
+        'Data Pengiriman',
+        style: GoogleFonts.poppins(
+          textStyle: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+            color: Colors.black,
+          ),
+        ),
+      ),
+      backgroundColor: Colors.white,
+      elevation: 0,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: Colors.blue),
+        onPressed: () {
+          final homeState = context.findAncestorStateOfType<HomeState>();
+          homeState?.onItemTapped(0);
+        },
+      ),
+    );
+  }
+
+  Widget buildPengirimanCard(
+      Map<String, dynamic> pengiriman, BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        // Aksi ketika card ditekan
-      },
+      onTap: () => _navigateToDetailPage(context, pengiriman),
       child: Card(
         elevation: 5,
         shape: RoundedRectangleBorder(
@@ -145,21 +156,24 @@ class _DataPengirimanState extends State<DataPengiriman> {
               IconButton(
                 icon: const Icon(Icons.info_outline,
                     color: Colors.blueAccent, size: 30),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DetailBarang(
-                          kurirName: widget.userName,
-                          idPengiriman: pengiriman[
-                              'id_pengiriman'], // Teruskan userName ke detail
-                          fotoBarangUrl: pengiriman['foto_barang_url'],
-                        ),
-                      ));
-                },
+                onPressed: () => _navigateToDetailPage(context, pengiriman),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  void _navigateToDetailPage(
+      BuildContext context, Map<String, dynamic> pengiriman) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DetailBarang(
+          kurirName: widget.userName,
+          idPengiriman: pengiriman['id_pengiriman'],
+          fotoBarangUrl: pengiriman['foto_barang_url'],
         ),
       ),
     );
