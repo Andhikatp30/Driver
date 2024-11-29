@@ -16,7 +16,7 @@ class History extends StatefulWidget {
 
 class _HistoryState extends State<History> {
   List<Map<String, dynamic>> historyList = [];
-  bool isLoading = true; // Loading state
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -36,9 +36,11 @@ class _HistoryState extends State<History> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['status'] == 'success') {
-          setState(() {
-            historyList = List<Map<String, dynamic>>.from(data['data']);
-          });
+          if (mounted) {
+            setState(() {
+              historyList = List<Map<String, dynamic>>.from(data['data']);
+            });
+          }
         } else {
           _showErrorSnackbar('Error: ${data['message']}');
         }
@@ -48,8 +50,14 @@ class _HistoryState extends State<History> {
     } catch (e) {
       _showErrorSnackbar('Error fetching history data: $e');
     } finally {
-      setState(() => isLoading = false);
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
     }
+  }
+
+  Future<void> _refreshHistoryData() async {
+    await fetchHistoryData();
   }
 
   void _showErrorSnackbar(String message) {
@@ -63,27 +71,30 @@ class _HistoryState extends State<History> {
     return Scaffold(
       appBar: buildAppBar(context),
       backgroundColor: Colors.grey[100],
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : historyList.isEmpty
-                ? Center(
-                    child: Text(
-                      'Tidak ada riwayat pengiriman',
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black54,
+      body: RefreshIndicator(
+        onRefresh: _refreshHistoryData,
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : historyList.isEmpty
+                  ? Center(
+                      child: Text(
+                        'Tidak ada riwayat pengiriman',
+                        style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black54,
+                        ),
                       ),
+                    )
+                  : ListView.builder(
+                      itemCount: historyList.length,
+                      itemBuilder: (context, index) {
+                        return HistoryCard(history: historyList[index]);
+                      },
                     ),
-                  )
-                : ListView.builder(
-                    itemCount: historyList.length,
-                    itemBuilder: (context, index) {
-                      return HistoryCard(history: historyList[index]);
-                    },
-                  ),
+        ),
       ),
     );
   }
@@ -114,7 +125,7 @@ class _HistoryState extends State<History> {
 class HistoryCard extends StatelessWidget {
   final Map<String, dynamic> history;
 
-  const HistoryCard({Key? key, required this.history}) : super(key: key);
+  const HistoryCard({super.key, required this.history});
 
   @override
   Widget build(BuildContext context) {

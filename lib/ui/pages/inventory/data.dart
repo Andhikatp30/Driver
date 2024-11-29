@@ -25,6 +25,7 @@ class _DataPengirimanState extends State<DataPengiriman> {
   }
 
   Future<void> fetchPengirimanData() async {
+    setState(() => isLoading = true);
     try {
       final response = await http.post(
         Uri.parse('http://10.0.2.2/api/pengiriman.php'),
@@ -35,10 +36,11 @@ class _DataPengirimanState extends State<DataPengiriman> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['status'] == 'success') {
-          setState(() {
-            pengirimanList = List<Map<String, dynamic>>.from(data['data']);
-            isLoading = false;
-          });
+          if (mounted) {
+            setState(() {
+              pengirimanList = List<Map<String, dynamic>>.from(data['data']);
+            });
+          }
         } else {
           _showError("Error: ${data['message']}");
         }
@@ -47,13 +49,18 @@ class _DataPengirimanState extends State<DataPengiriman> {
       }
     } catch (e) {
       _showError("Error fetching pengiriman data: $e");
+    } finally {
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
     }
   }
 
+  Future<void> _refreshPengirimanData() async {
+    await fetchPengirimanData();
+  }
+
   void _showError(String message) {
-    setState(() {
-      isLoading = false;
-    });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
     );
@@ -64,16 +71,30 @@ class _DataPengirimanState extends State<DataPengiriman> {
     return Scaffold(
       appBar: buildAppBar(context),
       backgroundColor: Colors.grey[100],
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : ListView.builder(
-                itemCount: pengirimanList.length,
-                itemBuilder: (context, index) {
-                  return buildPengirimanCard(pengirimanList[index], context);
-                },
-              ),
+      body: RefreshIndicator(
+        onRefresh: _refreshPengirimanData,
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : pengirimanList.isEmpty
+                  ? Center(
+                      child: Text(
+                        'Tidak ada data pengiriman tersedia',
+                        style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: pengirimanList.length,
+                      itemBuilder: (context, index) {
+                        return buildPengirimanCard(
+                            pengirimanList[index], context);
+                      },
+                    ),
+        ),
       ),
     );
   }
@@ -83,11 +104,9 @@ class _DataPengirimanState extends State<DataPengiriman> {
       title: Text(
         'Data Pengiriman',
         style: GoogleFonts.poppins(
-          textStyle: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w600,
-            color: Colors.black,
-          ),
+          fontSize: 22,
+          fontWeight: FontWeight.w600,
+          color: Colors.black,
         ),
       ),
       backgroundColor: Colors.white,
@@ -125,30 +144,24 @@ class _DataPengirimanState extends State<DataPengiriman> {
                   Text(
                     'ID Pengiriman: ${pengiriman['id_pengiriman']}',
                     style: GoogleFonts.poppins(
-                      textStyle: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
                     ),
                   ),
                   const SizedBox(height: 5),
                   Text(
                     'Nama Barang: ${pengiriman['nama_barang']}',
                     style: GoogleFonts.poppins(
-                      textStyle: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.black54,
-                      ),
+                      fontSize: 16,
+                      color: Colors.black54,
                     ),
                   ),
                   Text(
                     'ID Barang: ${pengiriman['id_barang']}',
                     style: GoogleFonts.poppins(
-                      textStyle: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.black54,
-                      ),
+                      fontSize: 16,
+                      color: Colors.black54,
                     ),
                   ),
                 ],

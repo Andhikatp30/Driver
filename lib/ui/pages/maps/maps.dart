@@ -1,165 +1,165 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:url_launcher/url_launcher.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_map/flutter_map.dart';
+// import 'package:google_fonts/google_fonts.dart';
+// import 'package:latlong2/latlong.dart';
+// import 'package:geocoding/geocoding.dart';
+// import 'package:url_launcher/url_launcher.dart';
 
-class MapsPage extends StatefulWidget {
-  final String address;
+// class MapsPage extends StatefulWidget {
+//   final String address;
 
-  const MapsPage({super.key, required this.address});
+//   const MapsPage({super.key, required this.address});
 
-  @override
-  _MapsPageState createState() => _MapsPageState();
-}
+//   @override
+//   _MapsPageState createState() => _MapsPageState();
+// }
 
-class _MapsPageState extends State<MapsPage> {
-  double? latitude;
-  double? longitude;
-  bool isError = false; 
+// class _MapsPageState extends State<MapsPage> {
+//   double? latitude;
+//   double? longitude;
+//   bool isError = false; 
 
-  @override
-  void initState() {
-    super.initState();
-    _getLatLngFromAddress(widget.address);
-  }
+//   @override
+//   void initState() {
+//     super.initState();
+//     _getLatLngFromAddress(widget.address);
+//   }
 
-  Future<void> _getLatLngFromAddress(String address) async {
-    try {
-      List<Location> locations = await locationFromAddress(address);
-      if (locations.isNotEmpty) {
-        setState(() {
-          latitude = locations.first.latitude;
-          longitude = locations.first.longitude;
-          isError = false;
-        });
-      } else {
-        _showError('Tidak ditemukan lokasi untuk alamat: $address');
-      }
-    } catch (e) {
-      _showError('Gagal mendapatkan lokasi untuk alamat "$address": $e');
-    }
-  }
+//   Future<void> _getLatLngFromAddress(String address) async {
+//     try {
+//       List<Location> locations = await locationFromAddress(address);
+//       if (locations.isNotEmpty) {
+//         setState(() {
+//           latitude = locations.first.latitude;
+//           longitude = locations.first.longitude;
+//           isError = false;
+//         });
+//       } else {
+//         _showError('Tidak ditemukan lokasi untuk alamat: $address');
+//       }
+//     } catch (e) {
+//       _showError('Gagal mendapatkan lokasi untuk alamat "$address": $e');
+//     }
+//   }
 
-  void _showError(String message) {
-    setState(() {
-      print('Latitude: $latitude, Longitude: $longitude'); // Debugging
+//   void _showError(String message) {
+//     setState(() {
+//       print('Latitude: $latitude, Longitude: $longitude'); // Debugging
 
-      isError = true;
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message, style: GoogleFonts.poppins(fontSize: 14)),
-        backgroundColor: Colors.red,
-      ),
-    );
-  }
+//       isError = true;
+//     });
+//     ScaffoldMessenger.of(context).showSnackBar(
+//       SnackBar(
+//         content: Text(message, style: GoogleFonts.poppins(fontSize: 14)),
+//         backgroundColor: Colors.red,
+//       ),
+//     );
+//   }
 
-  Future<void> openInGoogleMaps() async {
-    if (latitude != null && longitude != null) {
-      final googleMapsUrl =
-          'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
-      if (await canLaunch(googleMapsUrl)) {
-        await launch(googleMapsUrl);
-      } else {
-        _showError('Tidak dapat membuka Google Maps.');
-      }
-    } else {
-      _showError('Lokasi tidak tersedia untuk ditampilkan di Google Maps.');
-    }
-  }
+//   Future<void> openInGoogleMaps() async {
+//     if (latitude != null && longitude != null) {
+//       final googleMapsUrl =
+//           'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+//       if (await canLaunch(googleMapsUrl)) {
+//         await launch(googleMapsUrl);
+//       } else {
+//         _showError('Tidak dapat membuka Google Maps.');
+//       }
+//     } else {
+//       _showError('Lokasi tidak tersedia untuk ditampilkan di Google Maps.');
+//     }
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'OpenStreetMap',
-          style: GoogleFonts.poppins(
-            textStyle: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w600,
-              color: Colors.black,
-            ),
-          ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.blue),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.map, color: Colors.blue),
-            onPressed: openInGoogleMaps,
-            tooltip: 'Buka di Google Maps',
-          ),
-        ],
-      ),
-      body: isError
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Alamat tidak ditemukan.',
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      color: Colors.black54,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() => isError = false);
-                      _getLatLngFromAddress(widget.address);
-                    },
-                    child: Text(
-                      'Coba Lagi',
-                      style: GoogleFonts.poppins(fontSize: 14),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : latitude != null && longitude != null
-              ? FlutterMap(
-                  options: MapOptions(
-                    center: LatLng(latitude!, longitude!),
-                    zoom: 17.0,
-                  ),
-                  children: [
-                    TileLayer(
-                      urlTemplate:
-                          'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      subdomains: const ['a', 'b', 'c'],
-                    ),
-                    MarkerLayer(
-                      markers: [
-                        Marker(
-                          point: LatLng(latitude!, longitude!),
-                          width: 80.0,
-                          height: 80.0,
-                          builder: (context) => const Icon(
-                            Icons.location_on,
-                            color: Colors.red,
-                            size: 40.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                )
-              : const Center(
-                  child: CircularProgressIndicator(),
-                ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text(
+//           'OpenStreetMap',
+//           style: GoogleFonts.poppins(
+//             textStyle: const TextStyle(
+//               fontSize: 22,
+//               fontWeight: FontWeight.w600,
+//               color: Colors.black,
+//             ),
+//           ),
+//         ),
+//         backgroundColor: Colors.white,
+//         elevation: 0,
+//         leading: IconButton(
+//           icon: const Icon(Icons.arrow_back, color: Colors.blue),
+//           onPressed: () {
+//             Navigator.pop(context);
+//           },
+//         ),
+//         actions: [
+//           IconButton(
+//             icon: const Icon(Icons.map, color: Colors.blue),
+//             onPressed: openInGoogleMaps,
+//             tooltip: 'Buka di Google Maps',
+//           ),
+//         ],
+//       ),
+//       body: isError
+//           ? Center(
+//               child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: [
+//                   Text(
+//                     'Alamat tidak ditemukan.',
+//                     style: GoogleFonts.poppins(
+//                       fontSize: 16,
+//                       color: Colors.black54,
+//                     ),
+//                   ),
+//                   const SizedBox(height: 10),
+//                   ElevatedButton(
+//                     onPressed: () {
+//                       setState(() => isError = false);
+//                       _getLatLngFromAddress(widget.address);
+//                     },
+//                     child: Text(
+//                       'Coba Lagi',
+//                       style: GoogleFonts.poppins(fontSize: 14),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             )
+//           : latitude != null && longitude != null
+//               ? FlutterMap(
+//                   options: MapOptions(
+//                     center: LatLng(latitude!, longitude!),
+//                     zoom: 17.0,
+//                   ),
+//                   children: [
+//                     TileLayer(
+//                       urlTemplate:
+//                           'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+//                       subdomains: const ['a', 'b', 'c'],
+//                     ),
+//                     MarkerLayer(
+//                       markers: [
+//                         Marker(
+//                           point: LatLng(latitude!, longitude!),
+//                           width: 80.0,
+//                           height: 80.0,
+//                           builder: (context) => const Icon(
+//                             Icons.location_on,
+//                             color: Colors.red,
+//                             size: 40.0,
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   ],
+//                 )
+//               : const Center(
+//                   child: CircularProgressIndicator(),
+//                 ),
+//     );
+//   }
+// }
 
 
 // import 'package:flutter/material.dart';

@@ -25,8 +25,10 @@ if (flutterVersionName == null) {
 
 android {
     namespace = "com.example.driver"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    // compileSdk = flutter.compileSdkVersion
+    compileSdkVersion 34
+    // ndkVersion = flutter.ndkVersion
+    ndkVersion = "25.1.8937393"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -38,8 +40,10 @@ android {
         applicationId = "com.example.driver"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        // minSdk = flutter.minSdkVersion
+        // targetSdk = flutter.targetSdkVersion
+        minSdkVersion 21
+        targetSdkVersion 34
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
     }
@@ -56,3 +60,142 @@ android {
 flutter {
     source = "../.."
 }
+
+
+// buildscript {
+//     ext.kotlin_version = "1.8.0" // Menggunakan versi Kotlin yang kompatibel dengan modul Anda
+//     repositories {
+//         google()
+//         mavenCentral()
+//     }
+//     dependencies {
+//         classpath "com.android.tools.build:gradle:7.3.0"
+//         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+//     }
+// }
+
+// plugins {
+//     id "com.android.application"
+//     id "kotlin-android"
+//     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+//     id "dev.flutter.flutter-gradle-plugin"
+// }
+
+// def localProperties = new Properties()
+// def localPropertiesFile = rootProject.file("local.properties")
+// if (localPropertiesFile.exists()) {
+//     localPropertiesFile.withReader("UTF-8") { reader ->
+//         localProperties.load(reader)
+//     }
+// }
+
+// def flutterVersionCode = localProperties.getProperty("flutter.versionCode") ?: "1"
+// def flutterVersionName = localProperties.getProperty("flutter.versionName") ?: "1.0"
+
+// android {
+//     namespace = "com.example.driver"
+//     compileSdkVersion 34 // Menggunakan SDK terbaru untuk kompatibilitas
+//     ndkVersion "25.1.8937393" // Pastikan ini sesuai dengan kebutuhan NDK Anda
+
+//     compileOptions {
+//         sourceCompatibility JavaVersion.VERSION_1_8
+//         targetCompatibility JavaVersion.VERSION_1_8
+//     }
+
+//     defaultConfig {
+//         applicationId = "com.example.driver"
+//         minSdkVersion 21 // Mendukung perangkat Android 5.0 (Lollipop) dan lebih tinggi
+//         targetSdkVersion 34 // Menargetkan versi Android terbaru
+//         versionCode flutterVersionCode.toInteger()
+//         versionName flutterVersionName
+
+//         ndk {
+//             abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+//         }
+//     }
+
+//     buildTypes {
+//         release {
+//             // Signing dengan debug keys untuk build release sementara
+//             signingConfig signingConfigs.debug
+//             minifyEnabled false // Disable proguard sementara, aktifkan jika ingin optimasi
+//             shrinkResources false // Disable penghapusan resource sementara, aktifkan jika perlu
+//         }
+//         debug {
+//             minifyEnabled false
+//             shrinkResources false
+//         }
+//     }
+// }
+
+// flutter {
+//     source = "../.."
+// }
+
+// // Pastikan dependencies Flutter dan library lainnya tetap diperbarui
+// dependencies {
+//     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+//     // Tambahkan library lain yang dibutuhkan
+// }
+
+
+
+// plugins {
+//     id "com.android.application"
+//     id "kotlin-android"
+//     id "dev.flutter.flutter-gradle-plugin"
+// }
+
+// def localProperties = new Properties()
+// def localPropertiesFile = rootProject.file("local.properties")
+// if (localPropertiesFile.exists()) {
+//     localPropertiesFile.withReader("UTF-8") { reader ->
+//         localProperties.load(reader)
+//     }
+// }
+
+// def flutterVersionCode = localProperties.getProperty("flutter.versionCode") ?: "1"
+// def flutterVersionName = localProperties.getProperty("flutter.versionName") ?: "1.0"
+
+// android {
+//     namespace = "com.example.driver"
+//     compileSdk = 34 // Atur ini ke versi SDK terbaru yang stabil
+//     ndkVersion = flutter.ndkVersion
+
+//     compileOptions {
+//         sourceCompatibility = JavaVersion.VERSION_1_8
+//         targetCompatibility = JavaVersion.VERSION_1_8
+//     }
+
+//     defaultConfig {
+//         applicationId = "com.example.driver"
+//         minSdk = 19 // Minimum SDK untuk mendukung perangkat Android 4.1 ke atas
+//         targetSdk = 34 // Target SDK versi terbaru yang stabil
+//         versionCode = flutterVersionCode.toInteger()
+//         versionName = flutterVersionName
+
+//         ndk {
+//             abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+//         }
+//     }
+
+//     buildTypes {
+//         release {
+//             signingConfig signingConfigs.debug
+//             // minifyEnabled true // Untuk optimasi ukuran aplikasi
+//             // shrinkResources true
+//             // proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+//         }
+//     }
+
+//     // // Tambahkan kompatibilitas multidex untuk mendukung perangkat dengan spesifikasi rendah
+//     // multiDexEnabled true
+// }
+
+// flutter {
+//     source = "../.."
+// }
+
+// dependencies {
+//     implementation "androidx.multidex:multidex:2.0.1"
+// }

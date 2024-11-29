@@ -41,51 +41,27 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Future<void> _saveProfile() async {
-    // URL endpoint API Anda
-    const String apiUrl =
-        'http://10.0.2.2/api/editProfile.php'; // Gantilah dengan URL API Anda
-
-    // Data yang akan dikirimkan ke API
+    // API endpoint and request logic here
+    const String apiUrl = 'http://10.0.2.2/api/editProfile.php';
     final Map<String, String> body = {
       'name': nameController.text,
       'username': usernameController.text,
-      'password': passwordController.text,
     };
+    if (passwordController.text.isNotEmpty) {
+      body['password'] = passwordController.text;
+    }
 
-    // try {
-    //   // Kirim permintaan POST ke API
-    //   final response = await http.post(Uri.parse(apiUrl), body: body);
-
-    //   if (response.statusCode == 200) {
-    //     // Jika berhasil, tampilkan pesan sukses
-    //     // ignore: use_build_context_synchronously
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       const SnackBar(content: Text('Profil berhasil diperbarui!')),
-    //     );
-    //   } else {
-    //     // Jika gagal, tampilkan pesan kesalahan
-    //     // ignore: use_build_context_synchronously
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       const SnackBar(content: Text('Gagal memperbarui profil.')),
-    //     );
-    //   }
-    // } catch (e) {
-    //   // Tangani kesalahan yang terjadi
-    //   // ignore: use_build_context_synchronously
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text('Terjadi kesalahan: $e')),
-    //   );
-    // }
     try {
       final response = await http.post(Uri.parse(apiUrl), body: body);
-      // ignore: avoid_print
-      print('Response body: ${response.body}');
       if (response.statusCode == 200) {
         _showSnackBar(
             'Profil berhasil diperbarui!', Colors.green, Icons.check_circle);
-        // ignore: use_build_context_synchronously
-        Navigator.pop(context,
-            {'name': nameController.text, 'username': usernameController.text});
+
+        // Return updated data to Profile page
+        Navigator.pop(context, {
+          'name': nameController.text,
+          'username': usernameController.text,
+        });
       } else {
         _showSnackBar('Gagal memperbarui profil.', Colors.red, Icons.error);
       }
@@ -159,14 +135,9 @@ class _EditProfileState extends State<EditProfile> {
           children: [
             Stack(
               children: [
-                CircleAvatar(
+                const CircleAvatar(
                   radius: 60,
-                  backgroundColor: Colors.grey[300],
-                  child: const Icon(
-                    Icons.person,
-                    size: 60,
-                    color: Colors.white,
-                  ),
+                  backgroundImage: AssetImage('assets/images/avatar.png'),
                 ),
                 Positioned(
                   bottom: 0,
